@@ -1,0 +1,14 @@
+{
+	"name": "TweetDeckDisassembler",
+	"productName": "TweetDeckDisassembler",
+	"version": "1.0.0",
+	"description": "TweetDeckDisassembler",
+	"scripts": {
+		"start": "node main"
+	},
+	"dependencies": {
+		"js-beautify": "^1.10.2",
+		"webpack-unpack": "^2.0.0"
+	},
+	"devDependencies": {}
+}
