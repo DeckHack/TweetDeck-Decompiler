@@ -6,7 +6,7 @@ const { deobfuscator } = require("./deobfuscator.js");
 
 let unpackedDir = "unpacke";
 let hasUnpackedAnything = false;
-let beautifyModules = false;
+let beautifyModules = true;
 
 let deobfuscatedFunctions = {};
 
