@@ -4,7 +4,7 @@ const exec = require("child_process").exec;
 const unpacker = require("webpack-unpack");
 const { deobfuscator } = require("./deobfuscator.js");
 
-let unpackedDir = "unpacke";
+let unpackedDir = "unpacked";
 let hasUnpackedAnything = false;
 let beautifyModules = true;
 
