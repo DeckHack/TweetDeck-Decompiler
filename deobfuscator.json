@@ -1,3 +1,10 @@
 {
-	"jquery.js": "Sizzle CSS Selector Engine"
+	"jquery.js": "Sizzle CSS Selector Engine",
+	"flight.js": "/*! Flight v",
+	"react-dom-native-dependencies.js": "\\* react-dom-native-dependencies",
+	"react-dom.js": "\\* react-dom.production.",
+	"react.js": "\\* react.production.",
+	"react.scheduler.js": "\\* scheduler.production.",
+	"object-assign.js": "\\(c\\) Sindre Sorhus",
+	"jquery.tools.dateinput.js": "Dateinput - \\<input type\\=\\\"date\\\" \\/\\>"
 }

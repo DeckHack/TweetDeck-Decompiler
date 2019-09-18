@@ -7,6 +7,7 @@ const { deobfuscator } = require("./deobfuscator.js");
 let unpackedDir = "unpacked";
 let hasUnpackedAnything = false;
 let beautifyModules = true;
+let commentAlert = true;
 
 let deobfuscatedFunctions = {};
 
@@ -22,6 +23,9 @@ function saveModule(mod, loc) {
 
 	let source = mod.source;
 	let saveAs = "m" + mod.id + ".js";
+
+	if (source.match(/\/\*/g) !== null && commentAlert)
+		console.warn("Comment alert in module " + mod.id)
 
 	let deobfuscated = deobfuscator(source);
 
@@ -77,7 +81,7 @@ function unpack() {
 
 	if (beautifyModules) {
 
-		console.log("\nBeautifying modules... this may take a moment");
+		console.log("\nBeautifying modules...");
 
 		exec("js-beautify " + unpackedDir + "/*.js", (err, stdout, stderr) => {
 			if (err) {
@@ -86,7 +90,7 @@ function unpack() {
 			process.exit(0);
 		})
 	}
-	console.log("Resolving dependencies...");
+	console.log("Resolving dependencies... this may take a moment");
 
 	for (const file of fs.readdirSync(unpackedDir)) {
 		var source = fs.readFileSync(path.join(unpackedDir, file))+"";
