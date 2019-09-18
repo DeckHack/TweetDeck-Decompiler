@@ -24,14 +24,14 @@ function saveModule(mod, loc) {
 	let source = mod.source;
 	let saveAs = "m" + mod.id + ".js";
 
-	if (source.match(/\/\*/g) !== null && commentAlert)
-		console.warn("Comment alert in module " + mod.id)
-
 	let deobfuscated = deobfuscator(source);
 
 	if (deobfuscated !== null) {
 		deobfuscatedFunctions[mod.id] = deobfuscated;
 		saveAs = deobfuscated;
+	} else {
+		if (source.match(/\/\*/g) !== null && commentAlert)
+			console.warn("Comment alert in module " + mod.id)
 	}
 
 	for (var dep in mod.deps) {
