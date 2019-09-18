@@ -156,7 +156,6 @@ function unpack() {
 			let dependedOnBy = "";
 			var increment = 0;
 			requirementMap[ID].forEach(requiredThing => {
-				console.log(requiredThing);
 				if (increment < 20)
 					dependedOnBy += "\tDepended on by " + (deobfuscatedFunctions[requiredThing] || "m"+requiredThing+".js") + "\n";
 				increment++;
