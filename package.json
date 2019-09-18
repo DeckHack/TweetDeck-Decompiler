@@ -8,6 +8,7 @@
 	},
 	"dependencies": {
 		"js-beautify": "^1.10.2",
+		"progress": "^2.0.3",
 		"webpack-unpack": "^2.0.0"
 	},
 	"devDependencies": {}

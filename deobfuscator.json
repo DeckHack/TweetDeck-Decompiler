@@ -12,14 +12,21 @@
 	"services.TwitterClient.js": "TD\\.services\\.TwitterClient\\.prototype\\.processDeleteChirpEvent",
 	"services.TwitterActionFavoritedInteraction.js": "TD.services.TwitterActionFavoritedInteraction=function\\(e\\)",
 	"services.TwitterAction.js": "TD\\.services\\.TwitterAction=function\\(e\\)",
+	"services.TwitterActionOnTweet.js": "TD\\.services\\.TwitterActionOnTweet=function\\(e\\)",
+	"services.TwitterActionMention.js": "TD\\.services\\.TwitterActionMention=function\\(e\\)",
+	"services.TwitterActionRetweet.js": "TD\\.services\\.TwitterActionRetweet=function\\(e\\)",
 	"services.TwitterActionRetweetedInteraction.js": "TD\\.services\\.TwitterActionRetweetedInteraction=function\\(e\\)",
 	"services.TwitterUser.js": "TD\\.services\\.TwitterUser=function\\(e\\)",
 	"services.TwitterDeletedUser.js": "TD\\.services\\.TwitterDeletedUser=function\\(e",
 	"services.TwitterList.js": "TD\\.services\\.TwitterList=function\\(e\\)",
+	"services.TwitterConversationFailedParticipantsEvent.js": "TD\\.services\\.TwitterConversationFailedParticipantsEvent=function\\(e\\)",
+	"services.TwitterSearchParser.js": "TD\\.services\\.TwitterSearchParser=function\\(e",
 	"services.TweetDeckClient.js": "TD\\.services\\.TweetDeckClient=function\\(\\)",
 	"services.TwitterConversation.js": "TD\\.services\\.TwitterConversation=function\\(",
 	"services.TwitterConversationReadEvent.js": "TD\\.services\\.TwitterConversationReadEvent=function\\(e\\)",
 	"services.Conversations.js": "TD\\.services\\.Conversations=function\\(",
-	"services.TwitterMedia.js": "TD\\.services\\.TwitterMedia \\= function\\(\\) \\{\\}",
+	"services.CustomTimeline.js": "TD\\.services\\.CustomTimeline=function\\(",
+
+	"services.TwitterMedia.js": "TD\\.services\\.TwitterMedia\\=function\\(\\)\\{\\}",
 	"ui.updates.js": "TD\\.ui\\.updates=function\\(\\)"
 }

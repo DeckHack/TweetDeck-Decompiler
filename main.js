@@ -3,6 +3,7 @@ const path = require("path");
 const exec = require("child_process").exec;
 const unpacker = require("webpack-unpack");
 const { deobfuscator } = require("./deobfuscator.js");
+const ProgressBar = require('progress');
 
 let unpackedDir = "unpacked";
 let hasUnpackedAnything = false;
@@ -29,9 +30,9 @@ function saveModule(mod, loc) {
 	if (deobfuscated !== null) {
 		deobfuscatedFunctions[mod.id] = deobfuscated;
 		saveAs = deobfuscated;
-	} else {
-		if (source.match(/\/\*/g) !== null && commentAlert)
-			console.warn("Comment alert in module " + mod.id)
+	} //else {
+		// if (source.match(/\/\*/g) !== null && commentAlert)
+			// console.warn("Comment alert in module " + mod.id)
 	}
 
 	for (var dep in mod.deps) {
@@ -43,8 +44,22 @@ function saveModule(mod, loc) {
 	source = source.replace(/(?<=require)\((?=\d{0,4}\))/g,"(\"./m").replace(/(?<=require\(\"(\.\/)m\d{0,4})\)/g,".js\")");
 
 	fs.writeFileSync(unpackedDir + "/" + saveAs, source);
-	console.log("Saved " + (loc ? loc + " " : "") + "module " + saveAs);
+	// console.log("Saved " + (loc ? loc + " " : "") + "module " + saveAs);
 
+}
+
+function unpackerHelper(file, name) {
+	let unpacked = unpacker(fs.readFileSync("./" + file));
+	var bar = new ProgressBar("  Unpacking " + name + " [:bar] :percent", {
+	    complete: "=",
+	    incomplete: " ",
+	    width: 40,
+	    total: unpacked.length
+	});
+	unpacked.forEach(mod => {
+		bar.tick();
+		saveModule(mod, name);
+	});
 }
 
 function unpack() {
@@ -61,16 +76,16 @@ function unpack() {
 
 	for (const file of fs.readdirSync("./")) {
 		if (file.match(/bundle(\.[a-f0-9]+)?\.js/g) !== null) {
-			unpacker(fs.readFileSync("./" + file)).forEach(mod => saveModule(mod, "bundle"));
+			unpackerHelper(file, "bundle");
 		}
 		if (file.match(/vendor(\.[a-f0-9]+)?\.js/g) !== null) {
-			unpacker(fs.readFileSync("./" + file)).forEach(mod => saveModule(mod, "vendor"));
+			unpackerHelper(file, "vendor");
 		}
 		if (file.match(/mapbox(\.[a-f0-9]+)?\.js/g) !== null) {
-			unpacker(fs.readFileSync("./" + file)).forEach(mod => saveModule(mod, "mapbox"));
+			unpackerHelper(file, "mapbox");
 		}
 		if (file.match(/vendors\~mapbox(\.[a-f0-9]+)?\.js/g) !== null) {
-			unpacker(fs.readFileSync("./" + file)).forEach(mod => saveModule(mod, "vendors~mapbox"));
+			unpackerHelper(file, "vendors~mapbox");
 		}
 	}
 
@@ -90,9 +105,18 @@ function unpack() {
 			process.exit(0);
 		})
 	}
-	console.log("Resolving dependencies... this may take a moment");
+	console.log("Resolving dependencies... This may take a moment.");
 
-	for (const file of fs.readdirSync(unpackedDir)) {
+	let pleaseReadDir = fs.readdirSync(unpackedDir);
+
+	var bar = new ProgressBar("  Resolving dependencies [:bar] :percent", {
+	    complete: "=",
+	    incomplete: " ",
+	    width: 40,
+	    total: pleaseReadDir.length
+	});
+
+	for (const file of pleaseReadDir) {
 		var source = fs.readFileSync(path.join(unpackedDir, file))+"";
 		var requireRegex = /(?<=(require\([\"\']\.\/)|(\tRequires ))m\d+\.js(?=([\"\']\)|\n))/g;
 		var requirements = source.match(requireRegex) || [];
@@ -104,6 +128,7 @@ function unpack() {
 			}
 		})
 		fs.writeFileSync(unpackedDir + "/" + file, source);
+		bar.tick();
 	}
 
 }
