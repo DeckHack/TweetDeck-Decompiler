@@ -6,7 +6,8 @@
 	"author": "DeckHack",
 	"license": "MIT",
 	"scripts": {
-		"start": "node main"
+		"start": "node main",
+		"fetch": "node fetch"
 	},
 	"dependencies": {
 		"js-beautify": "^1.10.2",
