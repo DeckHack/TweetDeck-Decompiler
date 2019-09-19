@@ -2,7 +2,7 @@ const fs = require("fs");
 const path = require("path");
 const exec = require("child_process").exec;
 const unpacker = require("webpack-unpack");
-const { deobfuscator } = require("./deobfuscator.js");
+const { Deobfuscator } = require("./deobfuscator.js");
 const ProgressBar = require('progress');
 
 let unpackedDir = "unpacked";
@@ -13,6 +13,7 @@ let commentAlert = true;
 let deobfuscatedFunctions = {};
 let requirementMap = {};
 let deobfMap = {};
+let debug = false;
 
 /*
 	Helper function that saves the module passed in argument 1
@@ -25,9 +26,12 @@ function saveModule(mod, loc) {
 	let source = mod.source;
 	let saveAs = "m" + mod.id + ".js";
 
-	let deobfuscated = deobfuscator(source);
+	let deobfuscated = Deobfuscator.run(source, mod.id);
 
 	if (deobfuscated !== null) {
+		if (debug) {
+			console.log("DEOBFUSCATED " + mod.id + " -> " + deobfuscated);
+		}
 		deobfuscatedFunctions[mod.id] = deobfuscated;
 		saveAs = deobfuscated;
 		deobfMap[deobfuscated] = mod.id;
@@ -41,10 +45,20 @@ function saveModule(mod, loc) {
 		if (increment < 20) {
 			theDep = deobfuscatedFunctions[dep] || "m" + dep + ".js";
 			header += "\tRequires " + theDep + "\n";
+			if (debug) {
+				console.log("Module " + mod.id + " depends on " + dep);
+			}
 		}
 
 		if (typeof requirementMap[dep] === "undefined") {
+			if (debug) {
+				console.log("Creating requirement Map for " + dep);
+			}
 			requirementMap[dep] = []
+		}
+
+		if (debug) {
+			console.log("Pushing " + saveAs + " to requirement map for " + dep);
 		}
 
 		requirementMap[dep].push(saveAs);
@@ -59,7 +73,16 @@ function saveModule(mod, loc) {
 	source = header + "*/\n\n" + source;
 	source = source.replace(/(?<=require)\((?=\d{0,4}\))/g,"(\"./m").replace(/(?<=require\(\"(\.\/)m\d{0,4})\)/g,".js\")");
 
-	fs.writeFileSync(unpackedDir + "/" + saveAs, source);
+
+	if (debug) {
+		console.log("Writing file " + unpackedDir + "/" + saveAs);
+	}
+
+	let asdf = fs.writeFileSync(unpackedDir + "/" + saveAs, source);
+
+	if (debug) {
+		console.log("writeFileSync: "+ asdf);
+	}
 	// console.log("Saved " + (loc ? loc + " " : "") + "module " + saveAs);
 
 }
@@ -94,18 +117,22 @@ function unpack() {
 		fs.mkdirSync(unpackedDir); // If at first you don't succeed, try again
 	}
 
-	for (const file of fs.readdirSync("./")) {
+	for (var file of fs.readdirSync("./")) {
+
+		if (debug) {
+			console.log("Found file " + file);
+		}
+
 		if (file.match(/bundle(\.[a-f0-9]+)?\.js/g) !== null) {
 			unpackerHelper(file, "bundle");
 		}
 		if (file.match(/vendor(\.[a-f0-9]+)?\.js/g) !== null) {
 			unpackerHelper(file, "vendor");
 		}
-		if (file.match(/mapbox(\.[a-f0-9]+)?\.js/g) !== null) {
-			unpackerHelper(file, "mapbox");
-		}
 		if (file.match(/vendors\~mapbox(\.[a-f0-9]+)?\.js/g) !== null) {
 			unpackerHelper(file, "vendors~mapbox");
+		} else if (file.match(/mapbox(\.[a-f0-9]+)?\.js/g) !== null) {
+			unpackerHelper(file, "mapbox");
 		}
 	}
 
@@ -126,6 +153,10 @@ function unpack() {
 	}
 	console.log("  Resolving dependencies... This may take a moment.\n");
 
+	if (debug) {
+		console.log("Reading files of " + unpackedDir);
+	}
+
 	let pleaseReadDir = fs.readdirSync(unpackedDir);
 
 	var bar = new ProgressBar("  Resolving dependencies [:bar] :percent", {
@@ -136,6 +167,9 @@ function unpack() {
 	});
 
 	for (const file of pleaseReadDir) {
+		if (debug) {
+			console.log("Checking file " + file);
+		}
 		var source = fs.readFileSync(path.join(unpackedDir, file))+"";
 		var originalSource = source;
 		var requireRegex = /(?<=(require\([\"\']\.\/)|(\tRequires ))m\d+\.js(?=([\"\']\)|\n))/g;
@@ -144,13 +178,12 @@ function unpack() {
 		requirements.forEach(requirement => {
 			let func = deobfuscatedFunctions[requirement.match(/\d+/g)[0]];
 			if (typeof func !== "undefined") {
+				if (debug) {
+					console.log("We found " + requirement + " and are replacing it with " + func);
+				}
 				source = source.replace(requirement, func)
 			}
 		})
-
-		if (typeof deobfMap[file] !== "undefined") {
-			// console.log(deobfMap[file])
-		}
 
 		let ID = (typeof deobfMap[file] != "undefined") ? deobfMap[file] : parseInt(file.match(/\d+/g)[0]);
 
@@ -172,13 +205,17 @@ function unpack() {
 		}
 
 		if (originalSource !== source) {
-			fs.writeFileSync(unpackedDir + "/" + file, source);
+			let ok = fs.writeFileSync(unpackedDir + "/" + file, source);
+
+			if (debug) {
+				console.log(ok)
+			}
 		}
 
 		bar.tick();
 	}
 	console.log("\n  Waiting for all file operations to complete...\n");
-	process.exit(0);
+	// process.exit(0);
 
 }
 
