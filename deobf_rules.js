@@ -7,6 +7,7 @@ exports.deobf_rules = {
 	"react.scheduler.js": "* scheduler.production.",
 	"object-assign.js": "(c) Sindre Sorhus",
 	"jquery.tools.dateinput.js": "Dateinput - <input type=\"date\" />",
+	"leaflet-src.js": "return!this._container.getElementsByClassName(\"leaflet-zoom-animated\").length",
 	"moment.js": " && !e.invalidMonth && !e.invalidWeekday",
 	"core-js.object-define-property.js": " throw TypeError(\"Accessors not supported!\");",
 	"globalRenderOptions.js": "TD.globalRenderOptions=(n={",
