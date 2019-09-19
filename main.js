@@ -47,7 +47,7 @@ function saveModule(mod, loc) {
 			requirementMap[dep] = []
 		}
 
-		requirementMap[dep].push(dep);
+		requirementMap[dep].push(saveAs);
 		increment++;
 	}
 
@@ -148,7 +148,11 @@ function unpack() {
 			}
 		})
 
-		let ID = (typeof deobfMap[file] != "undefined") ? deobfMap[file] : file.match(/\d+/g)[0];
+		if (typeof deobfMap[file] !== "undefined") {
+			// console.log(deobfMap[file])
+		}
+
+		let ID = (typeof deobfMap[file] != "undefined") ? deobfMap[file] : parseInt(file.match(/\d+/g)[0]);
 
 		if (typeof requirementMap[ID] === "undefined") {
 			source = source.replace(/\n\t\[\*\*DECOMPILER_RENDER_DEPENDENCY_MAP\*\*\]/g, "")
@@ -156,8 +160,9 @@ function unpack() {
 			let dependedOnBy = "";
 			var increment = 0;
 			requirementMap[ID].forEach(requiredThing => {
+				// console.log(requiredThing, ID)
 				if (increment < 20)
-					dependedOnBy += "\tDepended on by " + (deobfuscatedFunctions[requiredThing] || "m"+requiredThing+".js") + "\n";
+					dependedOnBy += "\tDepended on by " + (deobfuscatedFunctions[requiredThing] || requiredThing) + "\n";
 				increment++;
 			})
 			if (increment > 20) {
