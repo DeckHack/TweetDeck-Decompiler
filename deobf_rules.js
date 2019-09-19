@@ -1,17 +1,31 @@
+/*
+	deobf_rules are detected strings within the module that help determine which module it is.
+	Regex is also supported: Start off the string with *** to activate Regex mode
+
+	Don't forget: these are processed BEFORE the beautification process,
+	so spaces and tabs (outside of strings) won't be there
+*/
+
 exports.deobf_rules = {
-	"jquery.js": "Sizzle CSS Selector Engine",
+
+	"controller.columnManager.js": "TD.controller.columnManager=function(",
+	"controller.upgrade.js": "TD.controller.upgrade=(",
+	"decider.js": "TD.config.decider_overlay=(0,r.default)(TD.config.decider_overlay||{}",
 	"flight.js": "/*! Flight v",
-	"react-dom-native-dependencies.js": "* react-dom-native-dependencies",
-	"react-dom.js": "* react-dom.production.",
-	"react.js": "* react.production.",
-	"react.scheduler.js": "* scheduler.production.",
-	"object-assign.js": "(c) Sindre Sorhus",
+	"globalRenderOptions.js": "TD.globalRenderOptions=(n={",
+	"jquery.js": "Sizzle CSS Selector Engine",
 	"jquery.tools.dateinput.js": "Dateinput - <input type=\"date\" />",
 	"leaflet-src.js": "return!this._container.getElementsByClassName(\"leaflet-zoom-animated\").length",
-	"moment.js": " && !e.invalidMonth && !e.invalidWeekday",
-	"core-js.object-define-property.js": " throw TypeError(\"Accessors not supported!\");",
-	"globalRenderOptions.js": "TD.globalRenderOptions=(n={",
-	"minWrapperVersion.js": "TD.minWrapperVersionMac=\"\"",
+	"mapbox.js": "\"leaflet-control-mapbox-geocoder leaflet-bar leaflet-control\"",
+	"modernizr.prefixed.js":"TRANSITION_END:n({transition:\"transitionend\",",
+	"moment.js": "&&!e.invalidMonth&&!e.invalidWeekday",
+	"minWrapperVersion.js": "TD.minWrapperVersionMac=\"",
+	"object-assign.js": "(c) Sindre Sorhus",
+	"react-dom-native-dependencies.js": "* react-dom-native-dependencies",
+	"react-dom.js": "* react-dom.production.",
+	"react-native.i18nManager.js": "i.default.canUseDOM&&document.documentElement&&document.documentElement.setAttribute&&document.documentElement",
+	"react.js": "* react.production.",
+	"react.scheduler.js": "* scheduler.production.",
 	"services.Conversations.js": "TD.services.Conversations=function(",
 	"services.CustomTimeline.js": "TD.services.CustomTimeline=function(",
 	"services.DataminrAlert.js": "TD.services.DataminrAlert=function(",
@@ -38,10 +52,28 @@ exports.deobf_rules = {
 	"services.TwitterList.js": "TD.services.TwitterList=function(e",
 	"services.TwitterUser.js": "TD.services.TwitterUser=function(e",
 	"services.TwitterSearchParser.js": "TD.services.TwitterSearchParser=function(e",
+	"services.TwitterStatus.js": "TD.services.TwitterStatus=function(e",
 	"services.TwitterMedia.js": "TD.services.TwitterMedia=function(){}",
-	"ui.column.js": "TD.ui.column=function(",
+	"storage.Account.js": "TD.storage.Account=function(",
+	"storage.Client.js": "TD.storage.Client=function(",
+	"storage.ClientController.js": "TD.storage.ClientController=(",
+	"storage.Column.js": "TD.storage.Column=function(",
+	"storage.ColumnController.js": "TD.storage.ColumnController=(",
+	"storage.Feed.js": "TD.storage.Feed=(",
+	"storage.FeedController.js": "TD.storage.FeedController=(",
+	"storage.notification.js": "TD.storage.notification=(",
+	"storage.SobjController.js": "TD.storage.SobjController=(",
+	"storage.StoredDelta.js": "TD.storage.StoredDelta=function(",
+	"storage.StoredObj.js": "TD.storage.StoredObj=function(",
+	"sync.controller.js": "TD.sync.controller=function(",
+	"ui.column.js": "TD.ui.column={",
 	"ui.debug.js": "TD.debug={",
 	"ui.main.js": "TD.ui.main=((n={})",
 	"ui.openColumn.js": "TD.ui.openColumn=function(",
-	"ui.updates.js": "TD.ui.updates=function()"
+	"ui.updates.js": "TD.ui.updates=function(",
+	"vo.ActionFilter.js": "TD.vo.ActionFilter=function(",
+	"vo.Column.js": "TD.vo.Column=function(",
+	"vo.EngagementFilter.js": "TD.vo.EngagementFilter=function(",
+	"vo.Filter.js": "TD.vo.Filter=function(",
+	"vo.SearchFilter.js": "TD.vo.SearchFilter=function("
 }

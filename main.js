@@ -135,7 +135,8 @@ function unpack() {
 			unpackerHelper(file, "mapbox");
 		}
 	}
-
+	Deobfuscator.checkIfAllWereReplaced();
+	
 	if (!hasUnpackedAnything) {
 		console.error("\n  It doesn't seem like we had anything to unpack.");
 		console.log("  Copy the corresponding TweetDeck JS files (bundle, vendor, mapbox, vendors~mapbox) to this project's root directory\n");
