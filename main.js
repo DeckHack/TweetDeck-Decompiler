@@ -1,3 +1,22 @@
+/*
+	TweetDeck Decompiler
+	Made with <3 by dangeredwolf, DeckHack, et al.
+	Released under MIT license
+*/
+
+/* Useful flags */
+
+let unpackedDir = "unpacked";     /* Directory to unpack to, local to project */
+let beautifyModules = true;       /* Formats modules with whitespacing, newlines, etc */
+let commentAlert = true;          /* Alerts you if any obfuscated modules contain comments.
+                                     These can be useful to figure out what they do.
+							  Note: This can trigger some false positives. */
+let debug = false;                /* Prints out a ton of debug console.logs. Use only if you need to. */
+let maximumShownDeps = 20;        /* Maximum shown dependencies within the flags. Default is 20.
+                                     This is very useful for modules like jQuery where hundreds of modules depend on it. */
+
+/* Scary code begins here */
+
 const fs = require("fs");
 const path = require("path");
 const exec = require("child_process").exec;
@@ -5,15 +24,12 @@ const unpacker = require("webpack-unpack");
 const { Deobfuscator } = require("./deobfuscator.js");
 const ProgressBar = require('progress');
 
-let unpackedDir = "unpacked";
-let hasUnpackedAnything = false;
-let beautifyModules = true;
-let commentAlert = true;
-
 let deobfuscatedFunctions = {};
 let requirementMap = {};
 let deobfMap = {};
-let debug = false;
+let modulesFound = [];
+
+let hasUnpackedAnything = false;
 
 /*
 	Helper function that saves the module passed in argument 1
@@ -27,6 +43,8 @@ function saveModule(mod, loc) {
 	let saveAs = "m" + mod.id + ".js";
 
 	let deobfuscated = Deobfuscator.run(source, mod.id);
+
+	modulesFound.push(mod.id);
 
 	if (deobfuscated !== null) {
 		if (debug) {
@@ -42,7 +60,7 @@ function saveModule(mod, loc) {
 	var increment = 0;
 
 	for (var dep in mod.deps) {
-		if (increment < 20) {
+		if (increment < maximumShownDeps) {
 			theDep = deobfuscatedFunctions[dep] || "m" + dep + ".js";
 			header += "\tRequires " + theDep + "\n";
 			if (debug) {
@@ -65,8 +83,8 @@ function saveModule(mod, loc) {
 		increment++;
 	}
 
-	if (increment > 20) {
-		header += "\t... and " + (increment - 20) + " others\n"
+	if (increment > maximumShownDeps) {
+		header += "\t... and " + (increment - maximumShownDeps) + " others\n"
 	}
 	header += "\n\t[**DECOMPILER_RENDER_DEPENDENCY_MAP**]\n";
 
@@ -117,6 +135,8 @@ function unpack() {
 		fs.mkdirSync(unpackedDir); // If at first you don't succeed, try again
 	}
 
+	/* Logic to detect TweetDeck JS files in project directory */
+
 	for (var file of fs.readdirSync("./")) {
 
 		if (debug) {
@@ -125,18 +145,20 @@ function unpack() {
 
 		if (file.match(/bundle(\.[a-f0-9]+)?\.js/g) !== null) {
 			unpackerHelper(file, "bundle");
-		}
-		if (file.match(/vendor(\.[a-f0-9]+)?\.js/g) !== null) {
+		} else if (file.match(/vendor(\.[a-f0-9]+)?\.js/g) !== null) {
 			unpackerHelper(file, "vendor");
-		}
-		if (file.match(/vendors\~mapbox(\.[a-f0-9]+)?\.js/g) !== null) {
+		} else if (file.match(/vendors\~mapbox(\.[a-f0-9]+)?\.js/g) !== null) {
 			unpackerHelper(file, "vendors~mapbox");
 		} else if (file.match(/mapbox(\.[a-f0-9]+)?\.js/g) !== null) {
 			unpackerHelper(file, "mapbox");
 		}
 	}
+
 	Deobfuscator.checkIfAllWereReplaced();
-	
+
+	// we need to have something to unpack.
+	// maybe one day we can automatically pull from tweetdeck.twitter.com
+
 	if (!hasUnpackedAnything) {
 		console.error("\n  It doesn't seem like we had anything to unpack.");
 		console.log("  Copy the corresponding TweetDeck JS files (bundle, vendor, mapbox, vendors~mapbox) to this project's root directory\n");
@@ -152,7 +174,7 @@ function unpack() {
 			}
 		})
 	}
-	console.log("  Resolving dependencies... This may take a moment.\n");
+	console.log("  Resolving dependencies... This may take a moment.\n"); // MAY???
 
 	if (debug) {
 		console.log("Reading files of " + unpackedDir);
@@ -194,7 +216,6 @@ function unpack() {
 			let dependedOnBy = "";
 			var increment = 0;
 			requirementMap[ID].forEach(requiredThing => {
-				// console.log(requiredThing, ID)
 				if (increment < 20)
 					dependedOnBy += "\tDepended on by " + (deobfuscatedFunctions[requiredThing] || requiredThing) + "\n";
 				increment++;
@@ -205,19 +226,30 @@ function unpack() {
 			source = source.replace(/\t\[\*\*DECOMPILER_RENDER_DEPENDENCY_MAP\*\*\]/g, dependedOnBy)
 		}
 
+		// Why write again if it's the same?
 		if (originalSource !== source) {
-			let ok = fs.writeFileSync(unpackedDir + "/" + file, source);
+			let fileOperation = fs.writeFileSync(unpackedDir + "/" + file, source);
 
 			if (debug) {
-				console.log(ok)
+				console.log(fileOperation)
 			}
 		}
 
-		bar.tick();
+		bar.tick(); // make the progress bar go
 	}
-	console.log("\n  Waiting for all file operations to complete...\n");
-	// process.exit(0);
+	finishThingsUp();
 
+}
+
+function finishThingsUp() {
+	// let modulesFoundCount = modulesFound.length;
+	// let modulesExpected = modulesFound[modulesFound.length - 1];
+
+	// console.log("Found " + modulesFoundCount + ", expected " + modulesExpected)
+
+	Deobfuscator.printDeobfCount(); // Hey deobfuscator, how did things go? Good, I hope!
+
+	console.log("\n  Waiting for all file operations to complete...\n");
 }
 
 console.log("  Starting TweetDeck Decompiler\n");
