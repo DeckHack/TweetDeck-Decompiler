@@ -7,7 +7,7 @@
 */
 
 exports.deobf_rules = {
-	"babel-index.3.js":"hasInstance,isConcatSpreadable,iterator,match,replace,search,species,split,toPrimitive,toStringTag,unscopables",
+	// "babel-index.3.js":"hasInstance,isConcatSpreadable,iterator,match,replace,search,species,split,toPrimitive,toStringTag,unscopables",
 	"components.AccountSelector.js": "TD.components.AccountSelector=a",
 	"components.ActionDialog.js": "TD.components.ActionDialog=TD.components.",
 	"components.AddToListsDialog.js": "TD.components.AddToListsDialog=TD.components.",
