@@ -151,6 +151,8 @@ function unpack() {
 			unpackerHelper(file, "vendors~mapbox");
 		} else if (file.match(/mapbox(\.[a-f0-9]+)?\.js/g) !== null) {
 			unpackerHelper(file, "mapbox");
+		} else if (file.match(/ondemand\.horizon\-web(\.[a-f0-9\-\.]+)?\.js/g) !== null) {
+			unpackerHelper(file, "ondemand.horizon-web");
 		}
 	}
 
