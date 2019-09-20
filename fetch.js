@@ -13,6 +13,17 @@ console.log("  Contacting tweetdeck.twitter.com...");
 function processPage() {
     let jsFiles = [];
 
+    try {
+	    for (const file of fs.readdirSync("./sources")) {
+		    fs.unlinkSync(path.join("./sources", file));
+	    }
+    } catch(e) {}
+
+    try {
+	    fs.mkdirSync("./sources")
+    } catch(e) {
+    }
+
     pageContent.match(/https:\/\/[\w\.\d\/\-\%]+\.js/g).forEach((a) => {
         var data = "";
         console.log("  Found JS file " + a + " on page.");
@@ -25,7 +36,7 @@ function processPage() {
             });
             res.on("end", () => {
                 console.log("  Writing file " + fileName);
-                fs.writeFileSync("./" + fileName, data);
+                fs.writeFileSync("./sources/" + fileName, data);
 
                 if (fileName.match("bundle") !== null) {
                     stealDependencies(data);
@@ -58,7 +69,7 @@ function stealDependencies(bundleJs) {
     })
 
     o.forEach((asdf, i) => {
-        console.log(" Fetching additional JS file " + o[i] + "." + p[i] + ".js");
+        console.log("  Fetching additional JS file " + o[i] + "." + p[i] + ".js");
         let data = "";
         let fileName = o[i] + "." + p[i] + ".js";
         let baseURL = "https://ton.twimg.com/tweetdeck-web/web/dist/";
@@ -68,7 +79,7 @@ function stealDependencies(bundleJs) {
             });
             res.on("end", () => {
                 console.log("  Writing file " + fileName);
-                fs.writeFileSync("./" + fileName, data);
+                fs.writeFileSync("./sources/" + fileName, data);
 
                 if (fileName.match("bundle") !== null) {
                     stealDependencies(data);

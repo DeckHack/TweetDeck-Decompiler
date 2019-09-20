@@ -54,26 +54,26 @@ class Deobfuscator {
 		for (var i in deobf_rules) {
 			let rule = deobf_rules[i];
 			let matches = false;
-			
+
 			if (typeof rule === "string") {
 				matches = source.includes(rule);
 			} else if (rule instanceof RegExp) {
 				if (rule.global) {
 					throw "Uh oh, RegExp rule must not be global: " + rule; // global modifies RegExp lastIndex after each match
 				}
-				
+
 				matches = rule.test(source);
 			} else if (typeof rule === "function") {
 				matches = rule(source, thisMod);
 			} else {
 				throw "Uh oh, could not determine rule type, expected string/RegExp/function, got: " + rule;
 			}
-			
+
 			if (debug) {
 				console.log("Rule: " + rule);
 				console.log("Matches: " + matches);
 			}
-			
+
 			if (matches) {
 				if (typeof Deobfuscator.doneOnes[i] !== "undefined") {
 					if (!duplicatesAreErrors) {

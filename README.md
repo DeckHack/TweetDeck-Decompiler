@@ -5,7 +5,7 @@
 
 **What does it do?**
 
-It unpacks, cleans up, and saves each module in TweetDeck as its own file. 
+It unpacks, cleans up, and saves each module in TweetDeck as its own file.
 
 Each file is exported to the `unpacked` folder, which is automatically created when you run TweetDeck Decompiler.
 
@@ -15,10 +15,10 @@ Each file is exported to the `unpacked` folder, which is automatically created w
 - TweetDeck's JavaScript files (`bundle.xx.js`, `vendor.xx.js`, `mapbox.xx.js`, etc)
 
 
-1. Put TweetDeck's JavaScript files (described above) into the project directory (TweetDeck-Decompiler)
-   - *It is not necessary to rename the files. TweetDeck Decompiler handles it either way.*
-2. Open your Terminal (PowerShell/CMD on Windows)
-3. CD into the project directory
-4. Run `npm install`
-5. Run `npm start`
-6. That's it!
+1. Open your Terminal (PowerShell/CMD on Windows)
+2. CD into the project directory
+3. Run `npm install`
+4. Run `npm run fetch`
+*This fetches TweetDeck's latest JS files automatically from the internet*
+4. Run `npm start`
+5. That's it!

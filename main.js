@@ -6,7 +6,9 @@
 
 /* Useful flags */
 
-let unpackedDir = "unpacked";     /* Directory to unpack to, local to project */
+let unpackedDir = "unpacked_unformatted";     /* Directory to unpack to, local to project */
+let beautifiedDir = "unpacked";     /* Directory to unpack to, local to project */
+let sourcesDir = "sources";     /* Directory to unpack to, local to project */
 let beautifyModules = true;       /* Formats modules with whitespacing, newlines, etc */
 let commentAlert = true;          /* Alerts you if any obfuscated modules contain comments.
                                      These can be useful to figure out what they do.
@@ -106,7 +108,7 @@ function saveModule(mod, loc) {
 }
 
 function unpackerHelper(file, name) {
-	let unpacked = unpacker(fs.readFileSync("./" + file));
+	let unpacked = unpacker(fs.readFileSync(path.join(sourcesDir, file)));
 	var bar = new ProgressBar("  Unpacking " + name + " [:bar] :percent", {
 	    complete: "=",
 	    incomplete: " ",
@@ -126,18 +128,16 @@ function unpack() {
 		for (const file of fs.readdirSync(unpackedDir)) {
 			fs.unlinkSync(path.join(unpackedDir, file));
 		}
-		// fs.rmdirSync(unpackedDir);
 	} catch(e) {}
 
-	try {
-		fs.mkdirSync(unpackedDir);
-	} catch(e) {
-		// fs.mkdirSync(unpackedDir); // If at first you don't succeed, try again
-	}
+	// Make dirs if not yet available
+	try {fs.mkdirSync(unpackedDir)} catch(e) {}
+	try {fs.mkdirSync(sourcesDir)} catch(e) {}
+	try {fs.mkdirSync(beautifiedDir)} catch(e) {}
 
 	/* Logic to detect TweetDeck JS files in project directory */
 
-	for (var file of fs.readdirSync("./")) {
+	for (var file of fs.readdirSync(sourcesDir)) {
 
 		if (debug) {
 			console.log("Found file " + file);
@@ -149,10 +149,14 @@ function unpack() {
 			unpackerHelper(file, "vendor");
 		} else if (file.match(/vendors\~mapbox(\.[a-f0-9]+)?\.js/g) !== null) {
 			unpackerHelper(file, "vendors~mapbox");
+		} else if (file.match(/vendors\~sentry(\.[a-f0-9]+)?\.js/g) !== null) {
+			unpackerHelper(file, "vendors~sentry");
+		} else if (file.match(/vendors\~ondemand(\..+)?\.js/g) !== null) {
+			unpackerHelper(file, "vendors~ondemand.horizon-web");
 		} else if (file.match(/mapbox(\.[a-f0-9]+)?\.js/g) !== null) {
 			unpackerHelper(file, "mapbox");
-		} else if (file.match(/ondemand\.horizon\-web(\.[a-f0-9\-\.js]+)?\.js/g) !== null) {
-			unpackerHelper(file, "ondemand.horizon-web");
+		} else if (file.match(/ondemand\.horizon\-web(\.[a-zGBH0-9\-\.]+)?\.js/g) !== null) {
+			unpackerHelper(file, file.match(/ondemand\.horizon\-web(\.[a-zGBH0-9\-\.]+)?\.js/g)[0]);
 		}
 	}
 
@@ -163,19 +167,9 @@ function unpack() {
 
 	if (!hasUnpackedAnything) {
 		console.error("\n  It doesn't seem like we had anything to unpack.");
-		console.log("  Copy the corresponding TweetDeck JS files (bundle, vendor, mapbox, vendors~mapbox) to this project's root directory\n");
+		console.log("  Please run npm run fetch before trying to decompile.\n");
 	}
 
-	if (beautifyModules) {
-
-		console.log("\n  Beautifying modules...\n");
-
-		exec("js-beautify " + unpackedDir + "/*.js", (err, stdout, stderr) => {
-			if (err) {
-				throw err;
-			}
-		})
-	}
 	console.log("  Resolving dependencies... This may take a moment.\n"); // MAY???
 
 	if (debug) {
@@ -238,6 +232,30 @@ function unpack() {
 		}
 
 		bar.tick(); // make the progress bar go
+	}
+
+	let readDirPlease = fs.readdirSync(unpackedDir);
+
+	var copyBar = new ProgressBar("  Copying unformatted unpacked files [:bar] :percent", {
+	    complete: "=",
+	    incomplete: " ",
+	    width: 40,
+	    total: readDirPlease.length
+	});
+
+	for (var file of readDirPlease) {
+		fs.copyFileSync(path.join(unpackedDir, file), path.join(beautifiedDir, file));
+	}
+
+	if (beautifyModules) {
+
+		console.log("\n  Beautifying modules...\n");
+
+		exec("js-beautify " + beautifiedDir + "/*.js", (err, stdout, stderr) => {
+			if (err) {
+				throw err;
+			}
+		})
 	}
 	finishThingsUp();
 

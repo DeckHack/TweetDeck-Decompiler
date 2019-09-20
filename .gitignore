@@ -2,7 +2,9 @@ logs
 *.log
 node_modules/
 
-unpack*/
+unpacked/
+unpacked_unformatted/
+sources/
 bundle*.js
 vendors~mapbox*.js
 vendor*.js
