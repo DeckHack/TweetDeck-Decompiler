@@ -2,9 +2,10 @@
 	deobf_rules are detected strings within the module that help determine which module it is.
 
 	Supported values:
-		`string`                matches when file contains specified string literal
-		/regex/                 matches when regular expression matches against file contents
-		function(source, id)    matches when function returns true when called with file contents and module id
+		`string`                     matches when file contains specified string literal
+		/regex/                      matches when regular expression matches against file contents
+		function(source, id)         matches when function returns true when called with file contents and module id
+		{ duplicates: N, rule: R }   requires that exactly N files match against rule R
 
 	Don't forget: these are processed BEFORE the beautification process,
 	so spaces and tabs (outside of strings) won't be there
