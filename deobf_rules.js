@@ -522,6 +522,11 @@ exports.deobf_rules = {
 	"react.js": `* react.production.`,
 	"react.scheduler.js": `* scheduler.production.`,
 	"reactivex.AsyncSubject.js": `.Subject);exports.AsyncSubject=`,
+	"reactivex.scheduler.AsyncScheduler.js": `.Scheduler);exports.AsyncScheduler=`,
+	"reactivex.scheduler.AsapAction.js": `.AsyncAction);exports.AsapAction=`,
+	"reactivex.scheduler.AsyncAction.js": `.Action);exports.AsyncAction=`,
+	"reactivex.scheduler.Action.js": `.Subscription);exports.Action=`,
+	"reactivex.Scheduler.js": `}();exports.Scheduler=`,
 	"reactivex.BehaviorSubject.js": `.Subject);exports.BehaviorSubject=`,
 	"reactivex.ReplaySubject.js": `.Subject);exports.ReplaySubject=`,
 	"reactivex.ConnectableObservable.js": `.Observable);exports.ConnectableObservable=`,
@@ -728,6 +733,8 @@ exports.deobf_rules = {
 	"reactivex.OuterSubscriber.js":`).Subscriber);exports.OuterSubscriber=`,
 
 	"reactivex.rxSubscriber.js":`}exports.rxSubscriber=`,
+	"reactivex.scheduler.asap.js":`;exports.asap=new`,
+	"reactivex.scheduler.async.js":`;exports.async=new`,
 	"reactivex.Subscriber.js":`.Subscription);exports.Subscriber=`,
 	"reactivex.Subject.js":`.Observable);exports.Subject=`,
 	"reactivex.Subscription.js":`}exports.Subscription=`,
@@ -749,6 +756,7 @@ exports.deobf_rules = {
 	"reactivex.util.isFunction.js": `"use strict";exports.isFunction=function(`,
 	"reactivex.util.isScheduler.js": `"use strict";exports.isScheduler=function(`,
 	"reactivex.util.tryCatch.js": `}}exports.tryCatch=function(`,
+	"reactivex.util.Immediate.js": `,this.canUseProcessNextTick()?this.setImmediate=this.createProcessNextTickSetImmediate():this.canUsePostMessage()?this.setImmediate=this.createPostMessageSetImmediate():this.canUseMessageChannel()?this.setImmediate=this.createMessageChannelSetImmediate():this.canUseReadyStateChange()?this.setImmediate=this.createReadyStateChangeSetImmediate():this.setImmediate`,
 
 	"services.bitly.js": `TD.services.bitly=((`,
 	"services.ChirpBase.js": `TD.services.ChirpBase=function(`,
