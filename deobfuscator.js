@@ -18,11 +18,35 @@ class Deobfuscator {
 		This lets the deobfuscator flag down any duplicate rules.
 	*/
 	static doneOnes = {};
+	static duplicateAware = {};
 	static deobfCount = 0;
 	static totalCount = 0;
 
 	constructor() {
 		return this;
+	}
+	
+	static initializeRules() {
+		for (var i in deobf_rules) {
+			let rule = deobf_rules[i];
+			
+			if (typeof rule !== "object") {
+				continue;
+			}
+			
+			if ("duplicates" in rule) {
+				if (!("rule" in rule)){
+					throw "Uh oh, duplicate-aware rule is missing the rule part of the rule: " + rule;
+				}
+				
+				Deobfuscator.duplicateAware[i] = {
+					total: rule.duplicates,
+					found: []
+				};
+				
+				deobf_rules[i] = rule.rule;
+			}
+		}
 	}
 
 	/*
@@ -35,7 +59,14 @@ class Deobfuscator {
 
 	static checkIfAllWereReplaced() {
 		for (var i in deobf_rules) {
-			if (typeof Deobfuscator.doneOnes[i] === "undefined") {
+			if (typeof Deobfuscator.duplicateAware[i] !== "undefined") {
+				var entry = Deobfuscator.duplicateAware[i];
+				var count = entry.found.length;
+				
+				if (count !== entry.total) {
+					console.log("  Warning: Duplicate-aware rule " + i + " applied an incorrect amount of times, expected " + entry.total + ", got " + count + ": [ " + entry.found.join(", ") + " ]");
+				}
+			} else if (typeof Deobfuscator.doneOnes[i] === "undefined") {
 				console.log("  Warning: Rule " + i + " did not apply to any modules.")
 			}
 		}
@@ -75,16 +106,27 @@ class Deobfuscator {
 			}
 
 			if (matches) {
-				if (typeof Deobfuscator.doneOnes[i] !== "undefined") {
+				if (typeof Deobfuscator.duplicateAware[i] !== "undefined") {
+					var found = Deobfuscator.duplicateAware[i].found;
+					found.push(thisMod);
+					
+					if (i.includes(".js")) {
+						returnMe = i.replace(".js", "." + found.length + ".js");
+					} else {
+						throw "Uh oh, rule " + i + " is missing the .js extension";
+					}
+				} else if (typeof Deobfuscator.doneOnes[i] !== "undefined") {
 					if (!duplicatesAreErrors) {
 						console.log("\n  Warning: Rule " + i + " was duplicated in " + Deobfuscator.doneOnes[i] + ", found processing " + thisMod + ".");
 						console.log("  duplicatesAreErrors is set to false, so processing will continue. Duplicates will not be deobfuscated.");
 						return null;
 					}
 					throw "Uh oh, seems we have a duplicate on " + i + " (last seen in " + Deobfuscator.doneOnes[i] + ", found processing " + thisMod + ")";
+				} else {
+					Deobfuscator.doneOnes[i] = thisMod;
+					returnMe = i;
 				}
-				Deobfuscator.doneOnes[i] = thisMod;
-				returnMe = i;
+				
 				Deobfuscator.deobfCount++;
 			}
 		}
@@ -94,4 +136,5 @@ class Deobfuscator {
 
 }
 
+Deobfuscator.initializeRules();
 exports.Deobfuscator = Deobfuscator;
