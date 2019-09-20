@@ -79,7 +79,7 @@ class Deobfuscator {
 					if (!duplicatesAreErrors) {
 						console.log("\n  Warning: Rule " + i + " was duplicated in " + Deobfuscator.doneOnes[i] + ", found processing " + thisMod + ".");
 						console.log("  duplicatesAreErrors is set to false, so processing will continue. Duplicates will not be deobfuscated.");
-						return;
+						return null;
 					}
 					throw "Uh oh, seems we have a duplicate on " + i + " (last seen in " + Deobfuscator.doneOnes[i] + ", found processing " + thisMod + ")";
 				}
