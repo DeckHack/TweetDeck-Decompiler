@@ -126,13 +126,13 @@ function unpack() {
 		for (const file of fs.readdirSync(unpackedDir)) {
 			fs.unlinkSync(path.join(unpackedDir, file));
 		}
-		fs.rmdirSync(unpackedDir);
+		// fs.rmdirSync(unpackedDir);
 	} catch(e) {}
 
 	try {
 		fs.mkdirSync(unpackedDir);
 	} catch(e) {
-		fs.mkdirSync(unpackedDir); // If at first you don't succeed, try again
+		// fs.mkdirSync(unpackedDir); // If at first you don't succeed, try again
 	}
 
 	/* Logic to detect TweetDeck JS files in project directory */
