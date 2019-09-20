@@ -129,6 +129,11 @@ function unpack() {
 			fs.unlinkSync(path.join(unpackedDir, file));
 		}
 	} catch(e) {}
+	try {
+		for (const file of fs.readdirSync(beautifiedDir)) {
+			fs.unlinkSync(path.join(beautifiedDir, file));
+		}
+	} catch(e) {}
 
 	// Make dirs if not yet available
 	try {fs.mkdirSync(unpackedDir)} catch(e) {}
