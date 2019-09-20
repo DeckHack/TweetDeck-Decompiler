@@ -1,14 +1,22 @@
 /*
 	deobf_rules are detected strings within the module that help determine which module it is.
-	Regex is also supported: Start off the string with *** to activate Regex mode
+
+	Supported values:
+		`string`                matches when file contains specified string literal
+		/regex/                 matches when regular expression matches against file contents
+		function(source, id)    matches when function returns true when called with file contents and module id
 
 	Don't forget: these are processed BEFORE the beautification process,
 	so spaces and tabs (outside of strings) won't be there
 */
 
+function module(wantedId){
+	return (_source, id) => id === wantedId; // WHEN TWEETDECK UPDATES, MAKE SURE TO UPDATE ALL MODULE ID RULES
+}
+
 exports.deobf_rules = {
-	"assets.fonts.tweetdeck-regular-webfont.woff2.js": `***\\+\\"web\\/assets\\/fonts\\/tweetdeck-regular-webfont\\.[a-f0-9]+\\.woff2`,
-	"assets.fonts.tweetdeck-regular-webfont.woff.js": `***\\+\\"web\\/assets\\/fonts\\/tweetdeck-regular-webfont\\.[a-f0-9]+\\.woff(?!2)`,
+	"assets.fonts.tweetdeck-regular-webfont.woff2.js": new RegExp(`\\+\\"web\\/assets\\/fonts\\/tweetdeck-regular-webfont\\.[a-f0-9]+\\.woff2`),
+	"assets.fonts.tweetdeck-regular-webfont.woff.js": new RegExp(`\\+\\"web\\/assets\\/fonts\\/tweetdeck-regular-webfont\\.[a-f0-9]+\\.woff(?!2)`),
 	"assets.global.backgrounds.default_profile.js": `+"web/assets/global/backgrounds/default_profile.`,
 	"assets.global.backgrounds.grad_top_dark.js": `+"web/assets/global/backgrounds/grad_top_dark.`,
 	"assets.global.backgrounds.login_bg.js": `+"web/assets/global/backgrounds/login_bg.`,
@@ -64,8 +72,8 @@ exports.deobf_rules = {
 	"assets.logos.ios-icon-iphone@2x.js": `+"web/assets/logos/ios-icon-iphone@2x.`,
 	"assets.logos.start_logo.js": `+"web/assets/logos/start_logo.`,
 	"assets.logos.start_logo@2x.js": `+"web/assets/logos/start_logo@2x.`,
-	"assets.sounds.tweet.mp3.js": `***\\+\"web/assets/sounds/tweet\.[a-f0-9]+\.mp3`,
-	"assets.sounds.tweet.ogg.js": `***\\+\"web/assets/sounds/tweet\.[a-f0-9]+\.ogg`,
+	"assets.sounds.tweet.mp3.js": new RegExp(`\\+\"web/assets/sounds/tweet\.[a-f0-9]+\.mp3`),
+	"assets.sounds.tweet.ogg.js": new RegExp(`\\+\"web/assets/sounds/tweet\.[a-f0-9]+\.ogg`),
 	// "babel-index.3.js": `hasInstance,isConcatSpreadable,iterator,match,replace,search,species,split,toPrimitive,toStringTag,unscopables`,
 	"cache.lists.js": `TD.cache.lists=function(`,
 	"cache.names.js": `TD.cache.names=((`,
