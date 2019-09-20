@@ -20,7 +20,6 @@ class Deobfuscator {
 	static doneOnes = {};
 	static deobfCount = 0;
 	static totalCount = 0;
-	static regexRules = {};
 
 	constructor() {
 		return this;
@@ -37,7 +36,7 @@ class Deobfuscator {
 	static checkIfAllWereReplaced() {
 		for (var i in deobf_rules) {
 			if (typeof Deobfuscator.doneOnes[i] === "undefined") {
-				console.log("  Warning: " + (Deobfuscator.regexRules[i] ? "Regex " : "") + "Rule " + i + " did not apply to any modules.")
+				console.log("  Warning: Rule " + i + " did not apply to any modules.")
 			}
 		}
 	}
@@ -53,51 +52,41 @@ class Deobfuscator {
 		Deobfuscator.totalCount++;
 
 		for (var i in deobf_rules) {
-			let thing = deobf_rules[i];
-
-			if (thing.substr(0,3) === "***") {
-				Deobfuscator.regexRules[i] = true;
-				if (debug) {
-					console.log("Detected RegEx");
-					console.log("thing: "+thing);
-					console.log("match thing: "+source.match(thing.substr(3)));
-
+			let rule = deobf_rules[i];
+			let matches = false;
+			
+			if (typeof rule === "string") {
+				matches = source.includes(rule);
+			} else if (rule instanceof RegExp) {
+				if (rule.global) {
+					throw "Uh oh, RegExp rule must not be global: " + rule; // global modifies RegExp lastIndex after each match
 				}
-				if (source.match(thing.substr(3)) !== null) {
-					if (typeof Deobfuscator.doneOnes[i] !== "undefined") {
-						if (!duplicatesAreErrors) {
-							console.log("\n  Warning: Rule " + i + " was duplicated in " + Deobfuscator.doneOnes[i] + ", found processing " + thisMod + ".");
-							console.log("  duplicatesAreErrors is set to false, so processing will continue. Duplicates will not be deobfuscated.");
-							return;
-						}
-						throw "Uh oh, seems we have a duplicate on " + i + " (last seen in " + Deobfuscator.doneOnes[i] + ", found processing " + thisMod + ")";
-					}
-					Deobfuscator.doneOnes[i] = thisMod;
-					returnMe = i;
-					Deobfuscator.deobfCount++;
-				}
+				
+				matches = rule.test(source);
+			} else if (typeof rule === "function") {
+				matches = rule(source, thisMod);
 			} else {
-				if (debug) {
-					console.log("thing: "+thing);
-					console.log("includes thing: "+source.includes(thing));
-
-				}
-				if (source.includes(thing)) {
-					if (typeof Deobfuscator.doneOnes[i] !== "undefined") {
-						if (!duplicatesAreErrors) {
-							console.log("\n  Warning: Rule " + i + " was duplicated in " + Deobfuscator.doneOnes[i] + ", found processing " + thisMod + ".");
-							console.log("  duplicatesAreErrors is set to false, so processing will continue. Duplicates will not be deobfuscated.");
-							return;
-						}
-						throw "Uh oh, seems we have a duplicate on " + i + " (last seen in " + Deobfuscator.doneOnes[i] + ", found processing " + thisMod + ")";
-					}
-					Deobfuscator.doneOnes[i] = thisMod;
-					returnMe = i;
-					Deobfuscator.deobfCount++;
-				}
+				throw "Uh oh, could not determine rule type, expected string/RegExp/function, got: " + rule;
 			}
-
-
+			
+			if (debug) {
+				console.log("Rule: " + rule);
+				console.log("Matches: " + matches);
+			}
+			
+			if (matches) {
+				if (typeof Deobfuscator.doneOnes[i] !== "undefined") {
+					if (!duplicatesAreErrors) {
+						console.log("\n  Warning: Rule " + i + " was duplicated in " + Deobfuscator.doneOnes[i] + ", found processing " + thisMod + ".");
+						console.log("  duplicatesAreErrors is set to false, so processing will continue. Duplicates will not be deobfuscated.");
+						return;
+					}
+					throw "Uh oh, seems we have a duplicate on " + i + " (last seen in " + Deobfuscator.doneOnes[i] + ", found processing " + thisMod + ")";
+				}
+				Deobfuscator.doneOnes[i] = thisMod;
+				returnMe = i;
+				Deobfuscator.deobfCount++;
+			}
 		}
 
 		return returnMe;
