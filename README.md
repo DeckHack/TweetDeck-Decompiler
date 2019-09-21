@@ -12,7 +12,6 @@ Each file is exported to the `unpacked` folder, which is automatically created w
 
 ### Installation Requirements
 - [Node.js](https://nodejs.org/en/) and NPM
-- TweetDeck's JavaScript files (`bundle.xx.js`, `vendor.xx.js`, `mapbox.xx.js`, etc)
 
 
 1. Open your Terminal (PowerShell/CMD on Windows)
