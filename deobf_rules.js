@@ -1,6 +1,8 @@
 /*
 	deobf_rules are detected strings within the module that help determine which module it is.
 
+	This is useful as module IDs can shift around whenever a TweetDeck update occurs
+
 	Supported values:
 		`string`                     matches when file contains specified string literal
 		/regex/                      matches when regular expression matches against file contents
@@ -504,6 +506,7 @@ exports.deobf_rules = {
 	"negate-function.js": `;return function(){return!t.apply(this,arguments)}}`,
 	"net.ajax.js": `.Authorization=TD.util.getBearerTokenAuthHeader()`,
 	"net.util.js": `window.encodeURIComponent=function(`,
+	"misc.NewComposerLearnMoreReact.js": `exports.NewComposerLearnMoreReact=`,
 	"object-assign.js": `(c) Sindre Sorhus`,
 	"polyfill.array.isArray.js": { duplicates: 4, rule: `exports=Array.isArray||function` },
 	"polyfill.function.bind.js": { duplicates: 2, rule: `exports=Function.bind||function` },
@@ -536,9 +539,15 @@ exports.deobf_rules = {
 	"reactivex.testing.HotObservable.js": `.Subject);exports.HotObservable=`,
 	"reactivex.ReplaySubject.js": `.Subject);exports.ReplaySubject=`,
 	"reactivex.observable.ArrayObservable.js": `.Observable);exports.ArrayObservable=`,
+	"reactivex.observable.DeferObservable.js": `.Observable);exports.DeferObservable=`,
 	// "reactivex.observable.combineLatest.js": `"function"==typeof t[t.length-1]`,
 	"reactivex.observable.ConnectableObservable.js": `.Observable);exports.ConnectableObservable=`,
 	"reactivex.observable.interval.js": `);exports.interval=`,
+	"reactivex.observable.empty.js": `.Observable.empty=`,
+	"reactivex.observable.merge.js": `.Observable.merge=`,
+	"reactivex.observable.race.js": `.Observable.race=`,
+	"reactivex.observable.never.js": `.Observable.never=`,
+	"reactivex.add.observable.interval.js": `.Observable.interval=`,
 	"reactivex.observable.IntervalObservable.js": `.Observable);exports.IntervalObservable=`,
 	"reactivex.observable.NeverObservable.js": `.Observable);exports.NeverObservable=`,
 	"reactivex.observable.TimerObservable.js": `.Observable);exports.TimerObservable=`,
