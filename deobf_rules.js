@@ -596,6 +596,7 @@ exports.deobf_rules = {
 	"reactivex.observable.ForkJoinObservable.js": `exports.ForkJoinObservable=`,
 	"reactivex.observable.dom.AjaxObservable.js": `null))}exports.ajaxGet=`,
 	"reactivex.observable.dom.ajax.js": `exports.ajax=r.AjaxObservable.create`,
+	"reactivex.observable.never.js": `exports.never=r.NeverObservable.create`,
 	"reactivex.observable.dom.webSocket.js": `.Observable.webSocket=`,
 	"reactivex.observable.dom.WebSocketSubject.js": `.AnonymousSubject);exports.WebSocketSubject=`,
 	"reactivex.add.observable.dom.ajax.js": `.Observable.ajax=`,
@@ -815,6 +816,15 @@ exports.deobf_rules = {
 
 	"reactivex.testing.SubscriptionLog.js": `exports.SubscriptionLog=`,
 	"reactivex.testing.SubscriptionLoggable.js": `}();exports.SubscriptionLoggable=`,
+
+	"sentry-javascript.packages.hub.src.index.js":`);exports.getCurrentHub=`,
+	"sentry-javascript.packages.hub.src.scope.js":`,exports.addGlobalEventProcessor=`,
+	"sentry-javascript.packages.utils.src.error.js":`(Error);exports.SentryError=`,
+	"sentry-javascript.packages.utils.src.is.js":`},exports.isErrorEvent=function(`,
+	"sentry-javascript.packages.utils.src.misc.js":`}exports.dynamicRequire=function(`,
+	"sentry-javascript.packages.utils.src.object.js":`},exports.safeNormalize=function(`,
+	// "sentry-javascript.packages.utils.src.severity.js":`.prototype.fromString=function(`,
+	"sentry-javascript.packages.utils.src.string.js":`},exports.safeJoin=function(`,
 
 	"services.bitly.js": `TD.services.bitly=((`,
 	"services.ChirpBase.js": `TD.services.ChirpBase=function(`,
