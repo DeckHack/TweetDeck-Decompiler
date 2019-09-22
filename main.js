@@ -16,7 +16,8 @@ let commentAlert = true;          /* Alerts you if any obfuscated modules contai
 let debug = false;                /* Prints out a ton of debug console.logs. Use only if you need to. */
 let maximumShownDeps = 20;        /* Maximum shown dependencies within the flags. Default is 20.
                                      This is very useful for modules like jQuery where hundreds of modules depend on it. */
-
+let reportHoles = false;          /* Lets you know if there are any holes in the Module array ,
+							  usually caused by missing files. */
 /* Scary code begins here */
 
 const fs = require("fs");
@@ -267,10 +268,27 @@ function unpack() {
 }
 
 function finishThingsUp() {
-	// let modulesFoundCount = modulesFound.length;
-	// let modulesExpected = modulesFound[modulesFound.length - 1];
+	if (reportHoles) {
+		let modulesFoundCount = modulesFound.length;
+		let modulesExpected = 0;
 
-	// console.log("Found " + modulesFoundCount + ", expected " + modulesExpected)
+		let temp = {}
+
+		modulesFound.forEach(a => {
+			temp[a] = true;
+			if (a > modulesExpected)
+				modulesExpected = a
+		});
+
+		for (let i = 0; i < modulesExpected; i++) {
+			if (temp[i] !== true) {
+				console.log("  There's a hole where module " + i + " should be.")
+			}
+		}
+
+		console.log("  Found " + modulesFoundCount + ", expected " + modulesExpected)
+	}
+
 
 	Deobfuscator.printDeobfCount(); // Hey deobfuscator, how did things go? Good, I hope!
 
