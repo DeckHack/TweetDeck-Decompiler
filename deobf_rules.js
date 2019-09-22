@@ -817,12 +817,16 @@ exports.deobf_rules = {
 	"reactivex.testing.SubscriptionLog.js": `exports.SubscriptionLog=`,
 	"reactivex.testing.SubscriptionLoggable.js": `}();exports.SubscriptionLoggable=`,
 
+	"sentry-javascript.packages.core.src.transports.noop.js":`}();exports.NoopTransport`,
 	"sentry-javascript.packages.hub.src.index.js":`);exports.getCurrentHub=`,
 	"sentry-javascript.packages.hub.src.scope.js":`,exports.addGlobalEventProcessor=`,
+	"sentry-javascript.packages.types.src.severity.js":`(exports.Severity||(exports.Severity={})),`,
 	"sentry-javascript.packages.utils.src.error.js":`(Error);exports.SentryError=`,
 	"sentry-javascript.packages.utils.src.is.js":`},exports.isErrorEvent=function(`,
+	"sentry-javascript.packages.utils.src.logger.js":`.prototype.error=function(){`,
 	"sentry-javascript.packages.utils.src.misc.js":`}exports.dynamicRequire=function(`,
 	"sentry-javascript.packages.utils.src.object.js":`},exports.safeNormalize=function(`,
+	"sentry-javascript.packages.utils.src.promisebuffer.js":`();exports.PromiseBuffer=`,
 	// "sentry-javascript.packages.utils.src.severity.js":`.prototype.fromString=function(`,
 	"sentry-javascript.packages.utils.src.string.js":`},exports.safeJoin=function(`,
 
