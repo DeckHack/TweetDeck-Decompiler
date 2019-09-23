@@ -270,12 +270,17 @@ function unpack() {
 			}
 		})
 
-		// console.log("\n  Running additional formatting...\n");
-		//
-		// let readPrettyDirPlease = fs.readdirSync(unpackedDir);
-		//
-		// for (var file of readPrettyDirPlease) {
-		// }
+		console.log("\n  Running additional formatting...\n");
+
+		let readPrettyDirPlease = fs.readdirSync(beautifiedDir);
+
+		for (var file of readPrettyDirPlease) {
+			var source = fs.readFileSync(path.join(beautifiedDir, file))+"";
+			source = source.replace(/(?<![a-zA-Z0-9])void 0(?![a-zA-Z0-9])/g, "undefined"); // void 0 => undefined
+			source = source.replace(/(?<![!A-Za-z0-9])!0(?![A-Za-z0-9])/g, "true"); // void 0 => undefined
+			source = source.replace(/(?<![!A-Za-z0-9])!1(?![A-Za-z0-9])/g, "false"); // void 0 => undefined
+			fs.writeFileSync(beautifiedDir + "/" + file, source);
+		}
 	}
 	finishThingsUp();
 
