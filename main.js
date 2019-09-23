@@ -269,6 +269,13 @@ function unpack() {
 				throw err;
 			}
 		})
+
+		// console.log("\n  Running additional formatting...\n");
+		//
+		// let readPrettyDirPlease = fs.readdirSync(unpackedDir);
+		//
+		// for (var file of readPrettyDirPlease) {
+		// }
 	}
 	finishThingsUp();
 
