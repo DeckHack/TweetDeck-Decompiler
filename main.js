@@ -311,7 +311,7 @@ function finishThingsUp() {
 	}
 
 
-	Deobfuscator.printDeobfCount(); // Hey deobfuscator, how did things go? Good, I hope!
+	Deobfuscator.printStatus(); // Hey deobfuscator, how did things go? Good, I hope!
 
 	console.log("\n  Waiting for all file operations to complete...\n");
 }
