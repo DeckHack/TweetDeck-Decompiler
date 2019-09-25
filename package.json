@@ -1,7 +1,7 @@
 {
 	"name": "TweetDeckDisassembler",
 	"productName": "TweetDeckDisassembler",
-	"version": "1.5.0",
+	"version": "1.8.0",
 	"description": "TweetDeckDisassembler",
 	"author": "DeckHack",
 	"license": "MIT",
@@ -11,6 +11,7 @@
 	},
 	"dependencies": {
 		"js-beautify": "^1.10.2",
+		"klaw-sync": "^6.0.0",
 		"progress": "^2.0.3",
 		"webpack-unpack": "^2.0.0"
 	},

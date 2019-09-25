@@ -10,16 +10,13 @@ let unpackedDir = "unpacked_unformatted";/* Directory to unpack to, local to pro
 let beautifiedDir = "unpacked";    /* Directory to unpack to, local to project */
 let sourcesDir = "sources";        /* Directory to unpack to, local to project */
 let beautifyModules = true;        /* Formats modules with whitespacing, newlines, etc */
-let commentAlert = true;           /* Alerts you if any obfuscated modules contain comments.
-                                      These can be useful to figure out what they do.
-						    	   Note: This can trigger some false positives. */
 let debug = false;                 /* Prints out a ton of debug console.logs. Use only if you need to. */
 let maximumShownDeps = 20;         /* Maximum shown dependencies within the flags. Default is 20.
                                       This is very useful for modules like jQuery where hundreds of modules depend on it. */
 let reportHoles = false;           /* Lets you know if there are any holes in the Module array ,
 							   usually caused by missing files. */
 let showParentOnUnknownModules=true/* Appends what script an unknown module is from to the name of the file for non-deobfuscated modules*/
-
+let useFolderStructures = true;    /* Put different things in different folders and stuff */
 /* Scary code begins here */
 
 const fs = require("fs");
@@ -27,7 +24,9 @@ const path = require("path");
 const exec = require("child_process").exec;
 const unpacker = require("webpack-unpack");
 const { Deobfuscator } = require("./deobfuscator.js");
-const ProgressBar = require('progress');
+const ProgressBar = require("progress");
+const klawSync = require("klaw-sync");
+const beautify = require("js-beautify").js;
 
 let deobfuscatedFunctions = {};
 let requirementMap = {};
@@ -55,9 +54,18 @@ function saveModule(mod, loc) {
 		if (debug) {
 			console.log("DEOBFUSCATED " + mod.id + " -> " + deobfuscated);
 		}
+		if (!useFolderStructures) {
+			deobfuscated = deobfuscated.replace(/\//g,".")
+		}
 		deobfuscatedFunctions[mod.id] = deobfuscated;
 		saveAs = deobfuscated;
 		deobfMap[deobfuscated] = mod.id;
+
+		let matchMePlease = deobfuscated.replace(/(?<!\/).[\w\.]+\.js/g,"") || deobfuscated;
+
+		if (deobfuscated.split("/").length > 1 && useFolderStructures) {
+			fs.mkdirSync(unpackedDir+"/"+matchMePlease, {recursive:true});
+		}
 	} else if (showParentOnUnknownModules) {
 		let thing = "m" + mod.id + "_" + loc.replace(".js","") + ".js";
 		saveAs = thing;
@@ -103,10 +111,10 @@ function saveModule(mod, loc) {
 
 
 	if (debug) {
-		console.log("Writing file " + unpackedDir + "/" + saveAs);
+		console.log("Writing file " + saveAs);
 	}
 
-	let asdf = fs.writeFileSync(unpackedDir + "/" + saveAs, source);
+	let asdf = fs.writeFileSync("./" + unpackedDir + "/" + saveAs, source);
 
 	if (debug) {
 		console.log("writeFileSync: "+ asdf);
@@ -132,16 +140,23 @@ function unpackerHelper(file, name) {
 function unpack() {
 
 	// Remove previously saved modules
-	try {
-		for (const file of fs.readdirSync(unpackedDir)) {
-			fs.unlinkSync(path.join(unpackedDir, file));
+
+	console.log("  Cleaning previous directories...\n");
+
+	for (let i = 0; i < 9; i++) {
+		for (const file of klawSync(unpackedDir, {nodir: true})) {
+			try{fs.unlinkSync(file.path);}catch(e){}
 		}
-	} catch(e) {}
-	try {
-		for (const file of fs.readdirSync(beautifiedDir)) {
-			fs.unlinkSync(path.join(beautifiedDir, file));
+		for (const file of klawSync(beautifiedDir, {nodir: true})) {
+			try{fs.unlinkSync(file.path);}catch(e){}
 		}
-	} catch(e) {}
+		for (const file of klawSync(unpackedDir, {nofile: true})) {
+			try{fs.rmdirSync(file.path, {recursive:true});}catch(e){}
+		}
+		for (const file of klawSync(beautifiedDir, {nofile: true})) {
+			try{fs.rmdirSync(file.path, {recursive:true});}catch(e){}
+		}
+	}
 
 	// Make dirs if not yet available
 	try {fs.mkdirSync(unpackedDir)} catch(e) {}
@@ -189,7 +204,7 @@ function unpack() {
 		console.log("Reading files of " + unpackedDir);
 	}
 
-	let pleaseReadDir = fs.readdirSync(unpackedDir);
+	let pleaseReadDir = klawSync(unpackedDir, {nodir: true});
 
 	var bar = new ProgressBar("  Resolving dependencies [:bar] :percent", {
 	    complete: "=",
@@ -200,9 +215,9 @@ function unpack() {
 
 	for (const file of pleaseReadDir) {
 		if (debug) {
-			console.log("Checking file " + file);
+			console.log("Checking file " + file.path);
 		}
-		var source = fs.readFileSync(path.join(unpackedDir, file))+"";
+		var source = fs.readFileSync(file.path)+"";
 		var originalSource = source;
 		var requireRegex = /(?<=(require\([\"\']\.\/)|(\tRequires ))m\d+\.js(?=([\"\']\)|\n))/g;
 		var requirements = source.match(requireRegex) || [];
@@ -216,8 +231,11 @@ function unpack() {
 				source = source.replace(requirement, func)
 			}
 		})
+		if (debug) {
+			console.log(file.path)
+		}
 
-		let ID = (typeof deobfMap[file] != "undefined") ? deobfMap[file] : parseInt(file.match(/\d+/g)[0]);
+		let ID = (typeof deobfMap[file.path] !== "undefined") ? deobfMap[file.path] : parseInt((file.path.match(/\d+/g) || 0)[0]);
 
 		if (typeof requirementMap[ID] === "undefined") {
 			source = source.replace(/\n\t\[\*\*DECOMPILER_RENDER_DEPENDENCY_MAP\*\*\]/g, "")
@@ -237,7 +255,7 @@ function unpack() {
 
 		// Why write again if it's the same?
 		if (originalSource !== source) {
-			let fileOperation = fs.writeFileSync(unpackedDir + "/" + file, source);
+			let fileOperation = fs.writeFileSync(file.path, source);
 
 			if (debug) {
 				console.log(fileOperation)
@@ -247,41 +265,62 @@ function unpack() {
 		bar.tick(); // make the progress bar go
 	}
 
-	let readDirPlease = fs.readdirSync(unpackedDir);
-
-	var copyBar = new ProgressBar("  Copying unformatted unpacked files [:bar] :percent", {
-	    complete: "=",
-	    incomplete: " ",
-	    width: 40,
-	    total: readDirPlease.length
-	});
-
-	for (var file of readDirPlease) {
-		fs.copyFileSync(path.join(unpackedDir, file), path.join(beautifiedDir, file));
-	}
-
 	if (beautifyModules) {
+
+		let readDirsPlease = klawSync(unpackedDir, {nofile: true});
+
+		for (var dir of readDirsPlease) {
+			fs.mkdirSync(dir.path.replace(unpackedDir, beautifiedDir), {recursive:true});
+		}
+
+
+		let readDirPlease = klawSync(unpackedDir, {nodir: true});
+
+		var copyBar = new ProgressBar("  Copying unformatted unpacked files [:bar] :percent", {
+		    complete: "=",
+		    incomplete: " ",
+		    width: 40,
+		    total: readDirPlease.length
+		});
+
+		for (var file of readDirPlease) {
+			fs.copyFileSync(file.path, file.path.replace(unpackedDir, beautifiedDir));
+		}
 
 		console.log("\n  Beautifying modules...\n");
 
-		exec("js-beautify " + beautifiedDir + "/*.js", (err, stdout, stderr) => {
-			if (err) {
-				throw err;
+		let readBeautifyDirPlease = klawSync(beautifiedDir, {nodir: true});
+
+		for (var file of readBeautifyDirPlease) {
+			if (debug) {
+				console.log("Beautifying " + file.path + "...");
 			}
-		})
+
+			let readTheDir = fs.readFileSync(file.path) + "";
+			let beautifiedThing = beautify(readTheDir);
+			if (beautifiedThing !== readTheDir) {
+				fs.writeFileSync(file.path, beautifiedThing);
+			}
+		}
+
+		// exec("js-beautify " + beautifiedDir + "/*.js", (err, stdout, stderr) => {
+		// 	if (err) {
+		// 		throw err;
+		// 	}
+		// })
 
 		console.log("\n  Running additional formatting...\n");
 
-		let readPrettyDirPlease = fs.readdirSync(beautifiedDir);
+		let readPrettyDirPlease = klawSync(beautifiedDir, {nodir: true});
 
 		for (var file of readPrettyDirPlease) {
-			var source = fs.readFileSync(path.join(beautifiedDir, file))+"";
-			
+			var source = fs.readFileSync(file.path)+"";
+
 			source = source.replace(/(?<![a-zA-Z0-9])void 0(?![a-zA-Z0-9])/g, "undefined"); // void 0 => undefined
 			source = source.replace(/(?<![!A-Za-z0-9])!0(?![A-Za-z0-9])/g, "true"); // void 0 => undefined
 			source = source.replace(/(?<![!A-Za-z0-9])!1(?![A-Za-z0-9])/g, "false"); // void 0 => undefined
 
-			fs.writeFileSync(beautifiedDir + "/" + file, source);
+			fs.writeFileSync(file.path, source);
 		}
 	}
 	finishThingsUp();
