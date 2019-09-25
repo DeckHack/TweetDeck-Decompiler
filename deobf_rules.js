@@ -9,12 +9,15 @@
 		function(source, id)         matches when function returns true when called with file contents and module id
 		{ duplicates: N, rule: R }   requires that exactly N files match against rule R
 
+	There are also static module rules, but these are highly discouraged, because they shift around due to TweetDeck updates.
+	They must only be used if they are absolutely necessary and there is no other way.
+
 	Don't forget: these are processed BEFORE the beautification process,
 	so spaces and tabs (outside of strings) won't be there
 */
 
 function module(wantedId){
-	return (_source, id) => id === wantedId; // WHEN TWEETDECK UPDATES, MAKE SURE TO UPDATE ALL MODULE ID RULES
+	return (_source, id) => id === wantedId; /* WHEN TWEETDECK UPDATES, MAKE SURE TO UPDATE ALL MODULE ID RULES */
 }
 
 exports.deobf_rules = {
@@ -974,7 +977,7 @@ exports.deobf_rules = {
 	"sync/trace.js": `TD.sync.trace=(`,
 	"sync/util.js": `stateLog("util.clone couldn't parse object"`,
 	"TD.js": `window.TD={`,
-	"TD_mustaches.js": `window.TD_mustaches=`,
+	"mustaches/TD_mustaches.js": `window.TD_mustaches=`,
 	"throw-if-not-function.js": { duplicates: 3, rule: `module.exports=function(t){if("function"!=typeof t)throw TypeError(t+" is not a function!");return t}` },
 	"throw-if-not-object.js": { duplicates: 3, rule: `module.exports=function(t){if(!r(t))throw TypeError(t+" is not an object!");return t}` },
 	"throw-if-undefined.js": { duplicates: 3, rule: `module.exports=function(t){if(void 0==t)throw TypeError("Can't call method on  "+t);return t}` },
