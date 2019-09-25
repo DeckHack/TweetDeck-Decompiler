@@ -13,7 +13,7 @@ let beautifyModules = true;        /* Formats modules with whitespacing, newline
 let debug = false;                 /* Prints out a ton of debug console.logs. Use only if you need to. */
 let maximumShownDeps = 20;         /* Maximum shown dependencies within the flags. Default is 20.
                                       This is very useful for modules like jQuery where hundreds of modules depend on it. */
-let reportHoles = false;           /* Lets you know if there are any holes in the Module array ,
+let reportHoles = true;           /* Lets you know if there are any holes in the Module array ,
 							   usually caused by missing files. */
 let showParentOnUnknownModules=true/* Appends what script an unknown module is from to the name of the file for non-deobfuscated modules
 							   NOTE: This WILL cause the process to take longer. */
@@ -163,6 +163,12 @@ function unpack() {
 	/* Remove previously saved modules */
 	console.log("  Cleaning previous directories...\n");
 
+	/* Make dirs if not yet available */
+
+	try {fs.mkdirSync(unpackedDir)} catch(e) {}
+	try {fs.mkdirSync(sourcesDir)} catch(e) {}
+	try {fs.mkdirSync(beautifiedDir)} catch(e) {}
+
 	for (let i = 0; i < 9; i++) {
 		for (const file of klawSync(unpackedDir, {nodir: true})) {
 			try{fs.unlinkSync(file.path);}catch(e){}
@@ -177,12 +183,6 @@ function unpack() {
 			try{fs.rmdirSync(file.path, {recursive:true});}catch(e){}
 		}
 	}
-
-	/* Make dirs if not yet available */
-
-	try {fs.mkdirSync(unpackedDir)} catch(e) {}
-	try {fs.mkdirSync(sourcesDir)} catch(e) {}
-	try {fs.mkdirSync(beautifiedDir)} catch(e) {}
 
 	/* Logic to detect TweetDeck JS files in project directory */
 
