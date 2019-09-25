@@ -19,8 +19,11 @@ class Deobfuscator {
 	*/
 	static doneOnes = {};
 	static duplicateAware = {};
+	
 	static deobfCount = 0;
 	static totalCount = 0;
+	
+	static warnings = [];
 
 	constructor() {
 		return this;
@@ -64,16 +67,26 @@ class Deobfuscator {
 				var count = entry.found.length;
 				
 				if (count !== entry.total) {
-					console.log("  Warning: Duplicate-aware rule " + i + " applied an incorrect amount of times, expected " + entry.total + ", got " + count + ": [ " + entry.found.join(", ") + " ]");
+					Deobfuscator.warnings.push("Duplicate-aware rule " + i + " applied an incorrect amount of times, expected " + entry.total + ", got " + count + ": [ " + entry.found.join(", ") + " ]");
 				}
 			} else if (typeof Deobfuscator.doneOnes[i] === "undefined") {
-				console.log("  Warning: Rule " + i + " did not apply to any modules.")
+				Deobfuscator.warnings.push("Rule " + i + " did not apply to any modules.");
 			}
 		}
 	}
 
-	static printDeobfCount() {
-		console.log("\n  " + Deobfuscator.deobfCount + " modules were deobfuscated out of " + Deobfuscator.totalCount + " modules.")
+	static printStatus() {
+		if (Deobfuscator.warnings.length === 0) {
+			console.log("\n  Deobfuscation finished with no warnings!");
+		} else {
+			console.log("\n  Deobfuscation finished with " + Deobfuscator.warnings.length + " warning(s):");
+			
+			for (var warn of Deobfuscator.warnings.sort()) {
+				console.log("  > " + warn);
+			}
+		}
+		
+		console.log("\n  " + Deobfuscator.deobfCount + " modules were deobfuscated out of " + Deobfuscator.totalCount + " modules.");
 	}
 
 	static run(source, thisMod) {
@@ -117,8 +130,7 @@ class Deobfuscator {
 					}
 				} else if (typeof Deobfuscator.doneOnes[i] !== "undefined") {
 					if (!duplicatesAreErrors) {
-						console.log("\n  Warning: Rule " + i + " was duplicated in " + Deobfuscator.doneOnes[i] + ", found processing " + thisMod + ".");
-						console.log("  duplicatesAreErrors is set to false, so processing will continue. Duplicates will not be deobfuscated.");
+						Deobfuscator.warnings.push("Rule " + i + " was duplicated in " + Deobfuscator.doneOnes[i] + ", found processing " + thisMod + ".");
 						return null;
 					}
 					throw "Uh oh, seems we have a duplicate on " + i + " (last seen in " + Deobfuscator.doneOnes[i] + ", found processing " + thisMod + ")";
