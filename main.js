@@ -147,7 +147,7 @@ function unpackerHelper(file, name) {
 	var bar = new ProgressBar("  Unpacking " + name + " [:bar] :percent", {
 	    complete: "=",
 	    incomplete: " ",
-	    width: 40,
+	    width: 30,
 	    total: unpacked.length
 	});
 	unpacked.forEach(mod => {
@@ -229,7 +229,7 @@ function unpack() {
 	var bar = new ProgressBar("  Resolving dependencies [:bar] :percent", {
 	    complete: "=",
 	    incomplete: " ",
-	    width: 40,
+	    width: 30,
 	    total: pleaseReadDir.length
 	});
 
@@ -312,17 +312,23 @@ function unpack() {
 		var copyBar = new ProgressBar("  Copying unformatted unpacked files [:bar] :percent", {
 		    complete: "=",
 		    incomplete: " ",
-		    width: 40,
+		    width: 30,
 		    total: readDirPlease.length
 		});
 
 		for (var file of readDirPlease) {
+			copyBar.tick();
 			fs.copyFileSync(file.path, file.path.replace(unpackedDir, beautifiedDir));
 		}
 
-		console.log("\n  Beautifying modules...\n");
-
 		let readBeautifyDirPlease = klawSync(beautifiedDir, {nodir: true});
+
+		var beautyBar = new ProgressBar("  Beautifying modules... [:bar] :percent", {
+		    complete: "=",
+		    incomplete: " ",
+		    width: 30,
+		    total: readBeautifyDirPlease.length
+		});
 
 		for (var file of readBeautifyDirPlease) {
 			if (debug) {
@@ -334,6 +340,8 @@ function unpack() {
 			if (beautifiedThing !== readTheDir) {
 				fs.writeFileSync(file.path, beautifiedThing);
 			}
+
+			beautyBar.tick();
 		}
 
 		console.log("\n  Running additional formatting...\n");
