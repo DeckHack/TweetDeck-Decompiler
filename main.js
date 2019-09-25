@@ -211,8 +211,7 @@ function unpack() {
 
 	Deobfuscator.checkIfAllWereReplaced();
 
-	/* we need to have something to unpack. */
-
+	/* We need to have something to unpack. */
 	if (!hasUnpackedAnything) {
 		console.error("\n  It doesn't seem like we had anything to unpack.");
 		console.log("  Please run npm run fetch before trying to decompile.\n");
@@ -252,7 +251,8 @@ function unpack() {
 				}
 				source = source.replace(requirement, func)
 			}
-		})
+		});
+
 		if (debug) {
 			console.log(file.path)
 		}
@@ -369,6 +369,7 @@ function finishThingsUp() {
 
 		let temp = {}
 
+		/* Try to figure out the largest known module */
 		modulesFound.forEach(a => {
 			temp[a] = true;
 			if (a > modulesExpected)
@@ -381,11 +382,15 @@ function finishThingsUp() {
 			}
 		}
 
+		/*
+			Even with fetch, there are holes. I'm not sure what they're from.
+			If you have any idea, please let maintainer @dangeredwolf know.
+		*/
 		console.log("  Found " + modulesFoundCount + ", expected " + modulesExpected)
 	}
 
 
-	Deobfuscator.printStatus(); // Hey deobfuscator, how did things go? Good, I hope!
+	Deobfuscator.printStatus(); /* Hey deobfuscator, how did things go? Good, I hope! */
 
 	console.log("\n  Waiting for all file operations to complete...\n");
 }
