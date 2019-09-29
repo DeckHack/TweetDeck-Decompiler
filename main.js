@@ -13,7 +13,7 @@ let beautifyModules = true;        /* Formats modules with whitespacing, newline
 let debug = false;                 /* Prints out a ton of debug console.logs. Use only if you need to. */
 let maximumShownDeps = 20;         /* Maximum shown dependencies within the flags. Default is 20.
                                       This is very useful for modules like jQuery where hundreds of modules depend on it. */
-let reportHoles = true;           /* Lets you know if there are any holes in the Module array ,
+let reportHoles = false;           /* Lets you know if there are any holes in the Module array ,
 							   usually caused by missing files. */
 let showParentOnUnknownModules=true/* Appends what script an unknown module is from to the name of the file for non-deobfuscated modules
 							   NOTE: This WILL cause the process to take longer. */

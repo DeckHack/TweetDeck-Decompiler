@@ -1,7 +1,7 @@
 {
 	"name": "TweetDeck-Decompiler",
 	"productName": "TweetDeck Decompiler",
-	"version": "1.8.0",
+	"version": "1.8.1",
 	"description": "A tool that allows developers to decompile TweetDeck into its base modules.",
 	"author": "DeckHack",
 	"repository": "https://github.com/DeckHack/TweetDeck-Decompiler",
