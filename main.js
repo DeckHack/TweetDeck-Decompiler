@@ -170,18 +170,26 @@ function unpack() {
 	try {fs.mkdirSync(beautifiedDir)} catch(e) {}
 
 	for (let i = 0; i < 9; i++) {
-		for (const file of klawSync(unpackedDir, {nodir: true})) {
-			try{fs.unlinkSync(file.path);}catch(e){}
-		}
-		for (const file of klawSync(beautifiedDir, {nodir: true})) {
-			try{fs.unlinkSync(file.path);}catch(e){}
-		}
-		for (const file of klawSync(unpackedDir, {nofile: true})) {
-			try{fs.rmdirSync(file.path, {recursive:true});}catch(e){}
-		}
-		for (const file of klawSync(beautifiedDir, {nofile: true})) {
-			try{fs.rmdirSync(file.path, {recursive:true});}catch(e){}
-		}
+		try{
+			for (const file of klawSync(unpackedDir, {nodir: true})) {
+				try{fs.unlinkSync(file.path);} catch(e) {}
+			}
+		} catch(e) {}
+		try{
+			for (const file of klawSync(beautifiedDir, {nodir: true})) {
+				try{fs.unlinkSync(file.path);} catch(e) {}
+			}
+		} catch(e) {}
+		try{
+			for (const file of klawSync(unpackedDir, {nofile: true})) {
+				try{fs.rmdirSync(file.path, {recursive:true});} catch(e) {}
+			}
+		} catch(e) {}
+		try{
+			for (const file of klawSync(beautifiedDir, {nofile: true})) {
+				try{fs.rmdirSync(file.path, {recursive:true});} catch(e) {}
+			}
+		} catch(e) {}
 	}
 
 	/* Logic to detect TweetDeck JS files in project directory */
