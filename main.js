@@ -73,7 +73,7 @@ function saveModule(mod, loc) {
 		saveAs = deobfuscated;
 		deobfMap[deobfuscated] = mod.id;
 
-		let matchMePlease = deobfuscated.replace(/(?<!\/).[\w\.]+\.js/g,"") || deobfuscated;
+		let matchMePlease = deobfuscated.replace(/(?<!\/).[\w\.\-]+\.js/g,"") || deobfuscated;
 
 		if (deobfuscated.split("/").length > 1 && useFolderStructures) {
 			fs.mkdirSync(unpackedDir+"/"+matchMePlease, {recursive:true});
