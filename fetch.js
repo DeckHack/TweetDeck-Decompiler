@@ -5,17 +5,41 @@
 const https = require("https");
 const fs = require("fs");
 
+let vendorVersion = "";
+let bundleVersion = "";
+
 let pageContent = "";
+
+let noWrite = true;
+let forceUpdate = false;
 
 console.log("  Starting TweetDeck Decompiler - Fetcher");
 console.log("  Contacting tweetdeck.twitter.com...");
+
+function clearBundleSources() {
+    for (const file of fs.readdirSync("./sources")) {
+        if (file.match("vendor") === null)
+    	   fs.unlinkSync(path.join("./sources", file));
+    }
+}
+function clearVendorSources() {
+    for (const file of fs.readdirSync("./sources")) {
+        if (file.match("vendor") !== null)
+    	   fs.unlinkSync(path.join("./sources", file));
+    }
+}
 
 function processPage() {
     let jsFiles = [];
 
     try {
 	    for (const file of fs.readdirSync("./sources")) {
-		    fs.unlinkSync(path.join("./sources", file));
+		    // fs.unlinkSync(path.join("./sources", file));
+            if (file.match("vendor") !== null) {
+                vendorVersion = file.match(/(?<=vendor\.)[a-f0-9]+(?=\.js)/g)[0] || "";
+            } else if (file.match("bundle") !== null) {
+                bundleVersion = file.match(/(?<=bundle\.)[a-f0-9]+(?=\.js)/g)[0] || "";
+            }
 	    }
     } catch(e) {}
 
@@ -28,6 +52,30 @@ function processPage() {
         var data = "";
         console.log("  Found JS file " + a + " on page.");
 
+        if (a.match("bundle") !== null) {
+            let version = a.match(/(?<=bundle\.)[a-f0-9]+(?=\.js)/g)[0];
+            if (version !== bundleVersion && bundleVersion !== "") {
+                console.log("  UPDATED - bundle.js (" + bundleVersion + " -> " + version + ")");
+                clearBundleSources();
+            } else {
+                console.log("  UP-TO-DATE - bundle.js (" + version + ")");
+                if (!forceUpdate) {
+                    return;
+                }
+            }
+        } else if (a.match("vendor") !== null) {
+            let version = a.match(/(?<=vendor\.)[a-f0-9]+(?=\.js)/g)[0];
+            if (version !== vendorVersion && vendorVersion !== "") {
+                console.log("  UPDATED - vendor.js (" + vendorVersion + " -> " + version + ")")
+                clearVendorSources();
+            } else {
+                console.log("  UP-TO-DATE - vendor.js (" + version + ")");
+                if (!forceUpdate) {
+                    return;
+                }
+            }
+        }
+
         let fileName = a.match(/[\w\d\.\-]+\.js/g)[0];
 
         https.get(a, (res) => {
@@ -36,9 +84,10 @@ function processPage() {
             });
             res.on("end", () => {
                 console.log("  Writing file " + fileName);
-                fs.writeFileSync("./sources/" + fileName, data);
+                if (!noWrite)
+                    fs.writeFileSync("./sources/" + fileName, data);
 
-                if (fileName.match("bundle") !== null) {
+                if (fileName.match("bundle") !== null && !noWrite) {
                     stealDependencies(data);
                 }
             });

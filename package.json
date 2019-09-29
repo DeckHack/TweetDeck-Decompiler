@@ -15,6 +15,5 @@
 		"klaw-sync": "^6.0.0",
 		"progress": "^2.0.3",
 		"webpack-unpack": "^2.0.0"
-	},
-	"devDependencies": {}
+	}
 }
