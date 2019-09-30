@@ -7,7 +7,7 @@
 
 It unpacks, cleans up, and saves each module in TweetDeck as its own file.
 
-Each file is exported to the `unpacked` folder, which is automatically created when you run TweetDeck Decompiler.
+Each file is exported to the `./unpacked` folder, which is automatically created when you run TweetDeck Decompiler.
 
 The magic sauce is not the unpacking, though. The magic sauce is the deobfuscator, which gives each module a human readable name, rather than just a number. Over 1000 modules as of writing are automatically deobfuscated, a number which continues to grow as more work is done. This is non-trivial because there are no actual names of modules within the code, nor do we have ahold of any debug symbols which could help us out.
 
@@ -23,9 +23,9 @@ TweetDeck is comprised of over 2400 individual modules, and these modules are ro
 2. `cd` into the project directory
 3. Run `npm install`
 4. Run `npm run fetch`
-*This fetches TweetDeck's latest JS files automatically from the internet*
+*This fetches TweetDeck's latest JS files automatically from the internet, placing them in `./sources`*
 4. Run `npm start`
-5. That's it!
+5. That's it! Exported files are available in `./unpacked`. (and `./unpacked_unformatted`, useful for deobfuscation rule development)
 
 ### Troubleshooting
 
