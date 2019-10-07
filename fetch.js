@@ -3,6 +3,7 @@
 */
 
 const https = require("https");
+const path = require("path");
 const fs = require("fs");
 
 let vendorVersion = "";
@@ -10,7 +11,7 @@ let bundleVersion = "";
 
 let pageContent = "";
 
-let noWrite = true;
+let noWrite = false;
 let forceUpdate = false;
 
 console.log("  Starting TweetDeck Decompiler - Fetcher");
@@ -54,7 +55,7 @@ function processPage() {
 
         if (a.match("bundle") !== null) {
             let version = a.match(/(?<=bundle\.)[a-f0-9]+(?=\.js)/g)[0];
-            if (version !== bundleVersion && bundleVersion !== "") {
+            if (version !== bundleVersion) {
                 console.log("  UPDATED - bundle.js (" + bundleVersion + " -> " + version + ")");
                 clearBundleSources();
             } else {
@@ -65,7 +66,7 @@ function processPage() {
             }
         } else if (a.match("vendor") !== null) {
             let version = a.match(/(?<=vendor\.)[a-f0-9]+(?=\.js)/g)[0];
-            if (version !== vendorVersion && vendorVersion !== "") {
+            if (version !== vendorVersion) {
                 console.log("  UPDATED - vendor.js (" + vendorVersion + " -> " + version + ")")
                 clearVendorSources();
             } else {
