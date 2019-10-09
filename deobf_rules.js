@@ -22,6 +22,7 @@ function module(wantedId){
 
 exports.deobf_rules = {
 	"antiscroll.js": `"antiscroll-inner"`,
+	"apollo-link.js": `e?console.warn("Promise Wrapper does not support multiple results from Observable")`,
 	"assets/fonts/tweetdeck-regular-webfont.woff2.js": new RegExp(`\\+\\"web\\/assets\\/fonts\\/tweetdeck-regular-webfont\\.[a-f0-9]+\\.woff2`),
 	"assets/fonts/tweetdeck-regular-webfont.woff.js": new RegExp(`\\+\\"web\\/assets\\/fonts\\/tweetdeck-regular-webfont\\.[a-f0-9]+\\.woff(?!2)`),
 	"assets/global/backgrounds/default_profile.js": `+"web/assets/global/backgrounds/default_profile.`,
@@ -194,7 +195,8 @@ exports.deobf_rules = {
 	"mapbox.js": `"leaflet-control-mapbox-geocoder leaflet-bar leaflet-control"`,
 	"math-truncate.js": { duplicates: 3, rule: `module.exports=function(t){return isNaN(t=+t)?0:(` },
 	"metrics.js": `TD.metrics=function()`,
-	"events/typeahead.js": `this.on("uiTypeaheadInputMoveDown",this.handleTypeaheadInputMoveDown)`,
+	"events/typeahead-search.js": `this.on("uiTypeaheadInputMoveDown",this.handleTypeaheadInputMoveDown)`,
+	"events/typeahead-suggestions.js": `{this.$input.addClass("is-focused"),this.trigger("uiSearchInPopoverShown")}`,
 	"events/modal.js": `)},this.showExportListModal=function(e`,
 	"events/keyboardShortcuts.js": `this.activeSequences={},this.sequenceStarters={},this.singleKeys={},this.combos={},`,
 	"modernizr/prefixed.js": `TRANSITION_END:n({transition:"transitionend",`,
@@ -537,6 +539,7 @@ exports.deobf_rules = {
 	"misc/positiveNumbersOnly.js": ` t>0?i(r(t),9007199254740991):0`, // number is negative -> return 0, number is positive -> return number
 	// "misc/export/empty-object.js": `module.exports={}`, //TODO: add duplicates rules
 	"misc/reactSuperMustBeCalled.js": `module.exports=function(t){if(void 0===t)throw new ReferenceError("this hasn't been initialised - super() hasn't been called");return t}`,
+	"packadic/util/version.js": `case"premajor":this.prerelease.length=0,this.patch=0,this.minor=0,`,
 	"object-assign.js": `(c) Sindre Sorhus`,
 	"polyfill/array/isArray.js": { duplicates: 4, rule: `exports=Array.isArray||function` },
 	"polyfill/array/forEach.js": `{forEach:function(t)`,
@@ -562,7 +565,7 @@ exports.deobf_rules = {
 	"react.js": `* react.production.`,
 	"react/scheduler.js": `* scheduler.production.`,
 
-	"reactivex/index.js":`var o=require("./reactivex/Subscription.js");exports.Subscription=o.Subscription;var a=require("./reactivex/Subscriber.js");exports.Subscriber=a.Subscriber;`,
+	"reactivex/index.js":`;exports.ConnectableObservable=l.ConnectableObservable;var f=`,
 
 	"reactivex/AsyncSubject.js": `.Subject);exports.AsyncSubject=`,
 	"reactivex/AnimationFrameScheduler.js": `.AsyncScheduler);exports.AnimationFrameScheduler=`,
@@ -918,6 +921,7 @@ exports.deobf_rules = {
 	"reactivex/testing/SubscriptionLog.js": `exports.SubscriptionLog=`,
 	"reactivex/testing/SubscriptionLoggable.js": `}();exports.SubscriptionLoggable=`,
 
+	"sentry-javascript/packages/browser.js": `.addBreadcrumb=i.addBreadcrumb`,
 	"sentry-javascript/packages/core/src/transports.noop.js":`}();exports.NoopTransport`,
 	"sentry-javascript/packages/hub/src/index.js":`);exports.getCurrentHub=`,
 	"sentry-javascript/packages/hub/src/scope.js":`,exports.addGlobalEventProcessor=`,
