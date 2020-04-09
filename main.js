@@ -118,7 +118,7 @@ function saveModule(mod, loc) {
 		increment++;
 	}
 
-	/* There's a lot, evidentally */
+	/* There's a lot, evidently */
 	if (increment > maximumShownDeps) {
 		header += "\t... and " + (increment - maximumShownDeps) + " others\n"
 	}
