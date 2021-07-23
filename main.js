@@ -54,6 +54,10 @@ function saveModule(mod, loc) {
 	/* Hook into Deobfuscator class */
 	let deobfuscated = Deobfuscator.run(source, mod.id);
 
+	if (mod.entry) {
+		console.log("  Note: Module " + mod.id + " has an entry point.");
+	}
+
 	modulesFound.push(mod.id);
 
 	if (deobfuscated !== null) {
