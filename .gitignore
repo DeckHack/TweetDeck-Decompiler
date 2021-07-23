@@ -10,3 +10,5 @@ vendors~mapbox*.js
 vendor*.js
 mapbox*.js
 ondemand*.js
+
+sources_gryphon/
