@@ -8,6 +8,7 @@
 	"license": "MIT",
 	"scripts": {
 		"start": "node main",
+		"fetch_gryphon": "node fetch_gryphon",
 		"fetch": "node fetch"
 	},
 	"dependencies": {
