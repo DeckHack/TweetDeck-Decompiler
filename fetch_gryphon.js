@@ -3,46 +3,16 @@
 */
 
 const https = require("https");
-const path = require("path");
 const fs = require("fs");
-
-let vendorVersion = "";
-let bundleVersion = "";
 
 let pageContent = "";
 
 let noWrite = false;
-let forceUpdate = false;
 
 console.log("  Starting TweetDeck Decompiler - Fetcher (Gryphon)");
 console.log("  Contacting tweetdeck.twitter.com...");
 
-function clearBundleSources() {
-    for (const file of fs.readdirSync("./sources_gryphon")) {
-        if (file.match("vendor") === null)
-    	   fs.unlinkSync(path.join("./sources_gryphon", file));
-    }
-}
-function clearVendorSources() {
-    for (const file of fs.readdirSync("./sources_gryphon")) {
-        if (file.match("vendor") !== null)
-    	   fs.unlinkSync(path.join("./sources_gryphon", file));
-    }
-}
-
 function processPage() {
-    let jsFiles = [];
-
-    try {
-	    for (const file of fs.readdirSync("./sources_gryphon")) {
-		    // fs.unlinkSync(path.join("./sources_gryphon", file));
-            if (file.match("vendor") !== null) {
-                vendorVersion = file.match(/(?<=vendor\.)[a-f0-9]+(?=\.js)/g)[0] || "";
-            } else if (file.match("bundle") !== null) {
-                bundleVersion = file.match(/(?<=bundle\.)[a-f0-9]+(?=\.js)/g)[0] || "";
-            }
-	    }
-    } catch(e) {}
 
     try {
 	    fs.mkdirSync("./sources_gryphon")
@@ -52,30 +22,6 @@ function processPage() {
     pageContent.match(/https:\/\/[\w\.\d\/\-\%\~]+\.js/g).forEach((a) => {
         var data = "";
         console.log("  Found JS file " + a + " on page.");
-
-        // if (a.match("bundle") !== null) {
-        //     let version = a.match(/(?<=bundle\.)[a-f0-9]+(?=\.js)/g)[0];
-        //     if (version !== bundleVersion) {
-        //         console.log("  UPDATED - bundle.js (" + bundleVersion + " -> " + version + ")");
-        //         clearBundleSources();
-        //     } else {
-        //         console.log("  UP-TO-DATE - bundle.js (" + version + ")");
-        //         if (!forceUpdate) {
-        //             return;
-        //         }
-        //     }
-        // } else if (a.match("vendor") !== null) {
-        //     let version = a.match(/(?<=vendor\.)[a-f0-9]+(?=\.js)/g)[0];
-        //     if (version !== vendorVersion) {
-        //         console.log("  UPDATED - vendor.js (" + vendorVersion + " -> " + version + ")")
-        //         clearVendorSources();
-        //     } else {
-        //         console.log("  UP-TO-DATE - vendor.js (" + version + ")");
-        //         if (!forceUpdate) {
-        //             return;
-        //         }
-        //     }
-        // }
 
         let fileName = a.match(/(?<=\.com\/)[\w\d\.\-\/\~]+\.js/g)[0];
 
