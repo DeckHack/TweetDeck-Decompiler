@@ -5,6 +5,7 @@
 const https = require("https");
 const fs = require("fs");
 const path = require("path");
+const beautify = require("js-beautify").js;
 
 let pageContent = "";
 
@@ -36,7 +37,8 @@ function processPage() {
       });
       res.on("end", () => {
         console.log("  Writing file " + fileName);
-        if (!noWrite) fs.writeFileSync("./sources_gryphon/" + fileName, data);
+        if (!noWrite)
+          fs.writeFileSync("./sources_gryphon/" + fileName, beautify(data));
 
         if (fileName.match("bundle") !== null && !noWrite) {
           stealDependencies(data);
@@ -77,7 +79,7 @@ function processPage() {
           console.log("  Writing file " + fileName);
           fs.writeFileSync(
             "./sources_gryphon/gryphon-client/client-web/" + fileName,
-            data
+            beautify(data)
           );
         });
       });
