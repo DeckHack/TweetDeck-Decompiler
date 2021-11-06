@@ -5,6 +5,7 @@ node_modules/
 unpacked/
 unpacked_unformatted/
 sources/
+sources-preview/
 bundle*.js
 vendors~mapbox*.js
 vendor*.js
