@@ -5,7 +5,7 @@ node_modules/
 unpacked/
 unpacked_unformatted/
 sources/
-sources-preview/
+sources_gryphon/
 bundle*.js
 vendors~mapbox*.js
 vendor*.js
